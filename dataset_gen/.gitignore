@@ -1,0 +1,6 @@
+.venv_pi3/
+.venv_vggt/
+logs/
+tmp/
+__pycache__/
+*.pyc
