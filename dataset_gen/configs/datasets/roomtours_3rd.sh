@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+DATASET_ID=roomtours_3rd
+DATASET_LABEL='RoomTours 3rd'
+
+SEG_JOB_NAME=roomtour-label-3rd
+SEG_LOG_PREFIX=roomtour_label_3rd
+SEG_PBS_QUEUE=rt_HF
+SEG_PBS_PROJECT=gag51402
+SEG_PBS_SELECT=1
+SEG_PBS_WALLTIME=24:00:00
+SEG_VIDEO_ROOT=/groups/gag51402/datasets/RoomTours/raw_videos/3rd_download
+SEG_OUTPUT_ROOT=/groups/gag51402/datasets/RoomTours/processed_label_segments_3rd_download
+SEG_GPU_IDS=0,1,2,3,4,5,6,7
+SEG_CONCURRENCY=8
+SEG_NUM_SHARDS=0
+SEG_RUNNER_MODE=queue
+
+PI3_JOB_NAME=pi3-roomtours-3rd
+PI3_LOG_PREFIX=pi3_roomtours_3rd
+PI3_PBS_QUEUE=rt_HF
+PI3_PBS_PROJECT=gag51492
+PI3_PBS_SELECT=1
+PI3_PBS_WALLTIME=24:00:00
+PI3_CONFIG=roomtours
+PI3_INPUT_BASE=/groups/gag51402/datasets/RoomTours/processed_label_segments_3rd_download
+PI3_OUTPUT_BASE=/groups/gag51402/datasets/roomtours_pi3_3rd
+PI3_INTERVAL=1
+PI3_NUM_GPUS=8
+PI3_PIXEL_LIMIT=255000
+PI3_MAX_ENTRIES=0
+PI3_TARGET_FRAMES=400
+PI3_NUM_SHARDS=8
+PI3_ROOMTOURS_SCENE_JSON=''
+PI3_OVERWRITE_EXISTING=0
+PI3_INCLUDE_PROCESSED=0

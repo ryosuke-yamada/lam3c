@@ -13,10 +13,15 @@ The pipeline covered here is:
 
 ## Layout
 
+- `configs/datasets/`: dataset-specific defaults for segmentation / Pi3 / VGGT
 - `docs/roomtours_dataset_provenance.md`: dataset-by-dataset provenance matrix
+- `scripts/submit_stage.sh`: generic qsub entrypoint for all stages
+- `scripts/run_stage.sh`: generic runtime entrypoint executed inside the job
+- `scripts/common/`: shared config / job / stage helpers
 - `scripts/segmentation/`: raw video -> `inside_only.avi` -> `scenes/*.mp4`
 - `scripts/pi3/`: `scenes/*.mp4` -> `pi3.ply`
 - `scripts/vggt/`: Pi3-aligned frame sampling -> VGGT / COLMAP export
+- `scripts/legacy_submit/`: archived historical dataset-specific submit wrappers
 - `third_party/Pi3/`: vendored Pi3 runtime code
 - `third_party/vggt/`: vendored VGGT runtime code
 - `setup.sh`: creates local virtual environments for the pipeline
@@ -38,7 +43,15 @@ This creates:
 
 ## Execution model
 
-All submit wrappers under `scripts/` resolve paths relative to `dataset_gen/` and expect the dataset roots to be provided via environment variables or the defaults embedded in each wrapper.
+The primary workflow is now config-driven:
+
+```bash
+./scripts/submit_stage.sh segmentation roomtours_batch_v8
+./scripts/submit_stage.sh pi3 roomtours_batch_v8
+./scripts/submit_stage.sh vggt roomtours_vggt_v2_200
+```
+
+`submit_stage.sh` reads the dataset defaults from `configs/datasets/*.sh`, applies any environment-variable overrides currently set in the shell, and submits the generic runtime script `scripts/run_stage.sh`.
 
 The wrappers still contain cluster-specific PBS resource directives. Adjust queue / project settings for your environment before release if needed.
 

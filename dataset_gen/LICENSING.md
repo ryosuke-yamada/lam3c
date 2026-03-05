@@ -24,7 +24,12 @@ The following paths are maintained as part of this repository's dataset-generati
 - `.gitignore`
 - `README.md`
 - `THIRD_PARTY.md`
+- `configs/`
 - `docs/`
+- `scripts/common/`
+- `scripts/run_stage.sh`
+- `scripts/submit_stage.sh`
+- `scripts/legacy_submit/`
 - `scripts/segmentation/`
 - `scripts/pi3/`
 - `scripts/vggt/`
@@ -38,6 +43,7 @@ Some files under `scripts/` were derived from pre-existing implementation code a
 - `scripts/pi3/pi3_batch_datasets.py`
 - `scripts/pi3/pi3_batch_legacy.py`
 - `scripts/vggt/demo_colmap.py`
+- files under `scripts/legacy_submit/`
 
 They should be reviewed carefully before assigning a final top-level license to `dataset_gen/`.
 

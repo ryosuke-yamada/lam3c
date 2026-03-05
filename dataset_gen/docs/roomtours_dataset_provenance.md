@@ -16,17 +16,17 @@
 
 | Final dataset | Raw input | Segmentation output | Stage1 submit | Stage2 submit | Frame / image cap | Observed outputs | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `DATA/roomtours_pi3_v2` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/segmentation/submit_roomtour_segmentation.sh` | `scripts/pi3/submit_pi3_roomtours_v2.sh` | `400` | `2267 pi3.ply` | Historical `v2` dataset. Current source repo no longer had an explicit wrapper for this output root. |
-| `DATA/roomtours_pi3_v2_200` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/segmentation/submit_roomtour_segmentation.sh` | `scripts/pi3/submit_pi3_roomtours.sh` | `200` | `1594 pi3.ply` | Current `submit_pi3_roomtours.sh` lineage. `lam3c` version freezes `ROOMTOURS_TARGET_FRAMES=200` explicitly. |
-| `DATA/roomtours_pi3_2nd` | `DATA/RoomTours/raw_videos/2nd_download` | `DATA/RoomTours/processed_label_segments_2nd_download` | `scripts/segmentation/submit_roomtour_segmentation_2nd.sh` | `scripts/pi3/submit_pi3_roomtours_2nd.sh` | `400` | `8940 pi3.ply` | Source repo script existed, but current code default became `200`; `lam3c` version fixes the cap to `400`. |
-| `DATA/roomtours_pi3_3rd` | `DATA/RoomTours/raw_videos/3rd_download` | `DATA/RoomTours/processed_label_segments_3rd_download` | `scripts/segmentation/submit_roomtour_segmentation_3rd.sh` | `scripts/pi3/submit_pi3_roomtours_3rd.sh` | `400` | `4767 pi3.ply` | Stage1 wrapper reconstructed from archived logs. Stage2 output root normalized to the observed dataset dir `roomtours_pi3_3rd`. |
-| `DATA/roomtours_pi3_house24` | `DATA/RoomTours/raw_videos/house24_download` | `DATA/RoomTours/processed_label_segments_house24_download` | `scripts/segmentation/submit_roomtour_segmentation_house24.sh` | `scripts/pi3/submit_pi3_roomtours_house24.sh` | `400` | `15655 pi3.ply` | Stage1 wrapper reconstructed from archived logs. Stage2 output root normalized to the observed dataset dir `roomtours_pi3_house24`. |
-| `DATA/roomtours_pi3_HouseTours` | `DATA/HouseTours/data/files/official-housetour-dataset/videos` | `DATA/RoomTours/processed_label_segments_HouseTours` | `scripts/segmentation/submit_roomtour_segmentation_housetours.sh` | `scripts/pi3/submit_pi3_roomtours_housetours.sh` | `400` | `10071 pi3.ply` | Output layout is `video_id/scene/pi3.ply` rather than `channel/video/scene/pi3.ply`. |
-| `DATA/roomtours_pi3_v4_relaxed` | `DATA/RoomTours/raw_videos/v4_relaxed_download` | `DATA/RoomTours/processed_label_segments_v4_relaxed` | `scripts/segmentation/submit_roomtour_segmentation_v4_relaxed.sh` | `scripts/pi3/submit_pi3_roomtours_v4_relaxed.sh` | `400` | `8599 pi3.ply` | Existing source scripts matched the dataset. |
-| `DATA/roomtours_pi3_batch_v6` | `DATA/RoomTours/raw_videos/batch_v6_download` | `DATA/RoomTours/processed_label_segments_batch_v6` | `scripts/segmentation/submit_roomtour_segmentation_batch_v6.sh` | `scripts/pi3/submit_pi3_roomtours_batch_v6_rt_HG.sh` | `400` | `11705 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
-| `DATA/roomtours_pi3_batch_v7` | `DATA/RoomTours/raw_videos/batch_v7_download` | `DATA/RoomTours/processed_label_segments_batch_v7` | `scripts/segmentation/submit_roomtour_segmentation_batch_v7.sh` | `scripts/pi3/submit_pi3_roomtours_batch_v7_rt_HG.sh` | `400` | `8302 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
-| `DATA/roomtours_pi3_batch_v8` | `DATA/RoomTours/raw_videos/batch_v8_download` | `DATA/RoomTours/processed_label_segments_batch_v8` | `scripts/segmentation/submit_roomtour_segmentation_batch_v8.sh` | `scripts/pi3/submit_pi3_roomtours_batch_v8_rt_HG.sh` | `400` | `19871 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
-| `DATA/roomtours_vggt_v2_200` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/segmentation/submit_roomtour_segmentation.sh` | `scripts/vggt/submit_vggt_roomtours_v2.sh` | `200` images | `1773 points3D.bin`, `355321 jpg` | Requires existing `DATA/roomtours_pi3_v2` outputs to decide which scenes to process. |
+| `DATA/roomtours_pi3_v2` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/submit_stage.sh segmentation roomtours_v2` | `scripts/submit_stage.sh pi3 roomtours_v2` | `400` | `2267 pi3.ply` | Historical `v2` dataset. Current source repo no longer had an explicit wrapper for this output root. |
+| `DATA/roomtours_pi3_v2_200` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/submit_stage.sh segmentation roomtours_v2_200` | `scripts/submit_stage.sh pi3 roomtours_v2_200` | `200` | `1594 pi3.ply` | Current `submit_pi3_roomtours.sh` lineage. `lam3c` version freezes `ROOMTOURS_TARGET_FRAMES=200` explicitly. |
+| `DATA/roomtours_pi3_2nd` | `DATA/RoomTours/raw_videos/2nd_download` | `DATA/RoomTours/processed_label_segments_2nd_download` | `scripts/submit_stage.sh segmentation roomtours_2nd` | `scripts/submit_stage.sh pi3 roomtours_2nd` | `400` | `8940 pi3.ply` | Source repo script existed, but current code default became `200`; `lam3c` version fixes the cap to `400`. |
+| `DATA/roomtours_pi3_3rd` | `DATA/RoomTours/raw_videos/3rd_download` | `DATA/RoomTours/processed_label_segments_3rd_download` | `scripts/submit_stage.sh segmentation roomtours_3rd` | `scripts/submit_stage.sh pi3 roomtours_3rd` | `400` | `4767 pi3.ply` | Stage1 wrapper reconstructed from archived logs. Stage2 output root normalized to the observed dataset dir `roomtours_pi3_3rd`. |
+| `DATA/roomtours_pi3_house24` | `DATA/RoomTours/raw_videos/house24_download` | `DATA/RoomTours/processed_label_segments_house24_download` | `scripts/submit_stage.sh segmentation roomtours_house24` | `scripts/submit_stage.sh pi3 roomtours_house24` | `400` | `15655 pi3.ply` | Stage1 wrapper reconstructed from archived logs. Stage2 output root normalized to the observed dataset dir `roomtours_pi3_house24`. |
+| `DATA/roomtours_pi3_HouseTours` | `DATA/HouseTours/data/files/official-housetour-dataset/videos` | `DATA/RoomTours/processed_label_segments_HouseTours` | `scripts/submit_stage.sh segmentation roomtours_housetours` | `scripts/submit_stage.sh pi3 roomtours_housetours` | `400` | `10071 pi3.ply` | Output layout is `video_id/scene/pi3.ply` rather than `channel/video/scene/pi3.ply`. |
+| `DATA/roomtours_pi3_v4_relaxed` | `DATA/RoomTours/raw_videos/v4_relaxed_download` | `DATA/RoomTours/processed_label_segments_v4_relaxed` | `scripts/submit_stage.sh segmentation roomtours_v4_relaxed` | `scripts/submit_stage.sh pi3 roomtours_v4_relaxed` | `400` | `8599 pi3.ply` | Existing source scripts matched the dataset. |
+| `DATA/roomtours_pi3_batch_v6` | `DATA/RoomTours/raw_videos/batch_v6_download` | `DATA/RoomTours/processed_label_segments_batch_v6` | `scripts/submit_stage.sh segmentation roomtours_batch_v6` | `scripts/submit_stage.sh pi3 roomtours_batch_v6` | `400` | `11705 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
+| `DATA/roomtours_pi3_batch_v7` | `DATA/RoomTours/raw_videos/batch_v7_download` | `DATA/RoomTours/processed_label_segments_batch_v7` | `scripts/submit_stage.sh segmentation roomtours_batch_v7` | `scripts/submit_stage.sh pi3 roomtours_batch_v7` | `400` | `8302 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
+| `DATA/roomtours_pi3_batch_v8` | `DATA/RoomTours/raw_videos/batch_v8_download` | `DATA/RoomTours/processed_label_segments_batch_v8` | `scripts/submit_stage.sh segmentation roomtours_batch_v8` | `scripts/submit_stage.sh pi3 roomtours_batch_v8` | `400` | `19871 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
+| `DATA/roomtours_vggt_v2_200` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/submit_stage.sh segmentation roomtours_vggt_v2_200` | `scripts/submit_stage.sh vggt roomtours_vggt_v2_200` | `200` images | `1773 points3D.bin`, `355321 jpg` | Requires existing `DATA/roomtours_pi3_v2` outputs to decide which scenes to process. |
 
 ## Key evidence used during reconstruction
 
@@ -37,20 +37,15 @@
 
 ## Files added or adjusted inside `dataset_gen`
 
-- Added stage1 wrappers reconstructed from logs:
-  - `scripts/segmentation/submit_roomtour_segmentation_3rd.sh`
-  - `scripts/segmentation/submit_roomtour_segmentation_house24.sh`
-  - `scripts/segmentation/submit_roomtour_segmentation_batch_v6.sh`
-  - `scripts/segmentation/submit_roomtour_segmentation_batch_v7.sh`
-  - `scripts/segmentation/submit_roomtour_segmentation_batch_v8.sh`
-- Added an explicit historical `v2` Pi3 wrapper:
-  - `scripts/pi3/submit_pi3_roomtours_v2.sh`
-- Adjusted copied Pi3 wrappers so they match the observed dataset directories and frame caps:
-  - `scripts/pi3/submit_pi3_roomtours.sh`
-  - `scripts/pi3/submit_pi3_roomtours_2nd.sh`
-  - `scripts/pi3/submit_pi3_roomtours_3rd.sh`
-  - `scripts/pi3/submit_pi3_roomtours_house24.sh`
+- Added config-driven stage entrypoints:
+  - `scripts/submit_stage.sh`
+  - `scripts/run_stage.sh`
+- Added dataset configs:
+  - `configs/datasets/*.sh`
+- Archived the historical dataset-specific submit wrappers:
+  - `scripts/legacy_submit/`
+- Kept the reconstructed historical wrapper logic only as a source for the config defaults and provenance notes.
 
 ## Release status
 
-This directory now vendors the required Pi3 / VGGT runtime code and uses repo-relative paths. The remaining environment-specific pieces are the PBS resource directives and the dataset-root defaults embedded in each submit wrapper.
+This directory now vendors the required Pi3 / VGGT runtime code and uses repo-relative paths. The primary job interface is the config-driven pair `scripts/submit_stage.sh` and `scripts/run_stage.sh`. The remaining environment-specific pieces are the PBS defaults and the dataset-root defaults embedded in `configs/datasets/*.sh`.
