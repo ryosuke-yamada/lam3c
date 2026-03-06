@@ -36,16 +36,20 @@ case "$STAGE" in
     SCRIPT_DIR="$PROJECT_DIR/scripts/pi3"
     source "$PROJECT_DIR/scripts/common/pi3_submit_common.sh"
 
-    CONFIG=${CONFIG:-$(dataset_gen_get_prefixed_var PI3 CONFIG)}
+    LAYOUT=${LAYOUT:-$(dataset_gen_get_prefixed_var PI3 LAYOUT)}
     INPUT_BASE=${INPUT_BASE:-$(dataset_gen_get_prefixed_var PI3 INPUT_BASE)}
     OUTPUT_BASE=${OUTPUT_BASE:-$(dataset_gen_get_prefixed_var PI3 OUTPUT_BASE)}
     INTERVAL=${INTERVAL:-$(dataset_gen_get_prefixed_var PI3 INTERVAL)}
     NUM_GPUS=${NUM_GPUS:-$(dataset_gen_get_prefixed_var PI3 NUM_GPUS)}
     PIXEL_LIMIT=${PIXEL_LIMIT:-$(dataset_gen_get_prefixed_var PI3 PIXEL_LIMIT)}
     MAX_ENTRIES=${MAX_ENTRIES:-$(dataset_gen_get_prefixed_var PI3 MAX_ENTRIES)}
-    ROOMTOURS_TARGET_FRAMES=${ROOMTOURS_TARGET_FRAMES:-$(dataset_gen_get_prefixed_var PI3 TARGET_FRAMES)}
+    TARGET_FRAMES=${TARGET_FRAMES:-$(dataset_gen_get_prefixed_var PI3 TARGET_FRAMES)}
+    IMAGE_TARGET_FRAMES=${IMAGE_TARGET_FRAMES:-$(dataset_gen_get_prefixed_var PI3 IMAGE_TARGET_FRAMES)}
+    PRESERVE_ORDER=${PRESERVE_ORDER:-$(dataset_gen_get_prefixed_var PI3 PRESERVE_ORDER)}
+    VIDEO_SKIP_SECONDS=${VIDEO_SKIP_SECONDS:-$(dataset_gen_get_prefixed_var PI3 VIDEO_SKIP_SECONDS)}
+    ADJUST_VIDEO_INTERVAL=${ADJUST_VIDEO_INTERVAL:-$(dataset_gen_get_prefixed_var PI3 ADJUST_VIDEO_INTERVAL)}
     NUM_SHARDS=${NUM_SHARDS:-$(dataset_gen_get_prefixed_var PI3 NUM_SHARDS)}
-    ROOMTOURS_SCENE_JSON=${ROOMTOURS_SCENE_JSON:-$(dataset_gen_get_prefixed_var PI3 ROOMTOURS_SCENE_JSON)}
+    SCENE_JSON=${SCENE_JSON:-$(dataset_gen_get_prefixed_var PI3 SCENE_JSON)}
     OVERWRITE_EXISTING=${OVERWRITE_EXISTING:-$(dataset_gen_get_prefixed_var PI3 OVERWRITE_EXISTING)}
     INCLUDE_PROCESSED=${INCLUDE_PROCESSED:-$(dataset_gen_get_prefixed_var PI3 INCLUDE_PROCESSED)}
     LOG_BASE="$(dataset_gen_get_prefixed_var PI3 LOG_PREFIX).${PBS_JOBID:-noid}.${PBS_ARRAY_INDEX:-noidx}"

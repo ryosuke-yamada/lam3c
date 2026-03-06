@@ -21,12 +21,15 @@ import math
 from PIL import Image
 from torchvision import transforms
 
-def load_video_as_tensor_with_skip(video_path, interval=1, skip_seconds=10, PIXEL_LIMIT=255000, adjust_for_high_fps=False, target_frames=1500, dataset_type=None):
-    """
-    動画から画像を読み込み、データセットに応じてスキップとinterval調整を行う
-    Walking Tours: 最初の10秒スキップ + interval調整
-    その他: スキップなし + 1500フレーム超過時のみinterval調整
-    """
+def load_video_as_tensor_with_skip(
+    video_path,
+    interval=1,
+    skip_seconds=0,
+    PIXEL_LIMIT=255000,
+    adjust_for_high_fps=False,
+    target_frames=1500,
+):
+    """Load and resize video frames with optional front skipping and interval adjustment."""
     sources = []
     
     cap = cv2.VideoCapture(video_path)
@@ -37,8 +40,7 @@ def load_video_as_tensor_with_skip(video_path, interval=1, skip_seconds=10, PIXE
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     
-    # Walking Tours以外はスキップしない
-    if dataset_type == "walking_tours":
+    if skip_seconds > 0:
         skip_frames = int(fps * skip_seconds)
         available_frames = total_frames - skip_frames
         print(f"Loading frames from video: {video_path} (skipping first {skip_seconds} seconds)")
@@ -46,19 +48,13 @@ def load_video_as_tensor_with_skip(video_path, interval=1, skip_seconds=10, PIXE
         skip_frames = 0
         available_frames = total_frames
         print(f"Loading frames from video: {video_path} (no skipping)")
-    
+
     original_interval = interval
 
-    # kinetics は処理を軽くするため interval=fps/2 に固定
-    if dataset_type == "kinetics":
-        desired = max(1, int(round(fps / 2)))
-        print(f"Video info: FPS={fps:.2f}. Overriding interval for kinetics: {original_interval} -> {desired}")
-        interval = desired
-    elif adjust_for_high_fps:
-        # 1500フレーム超過時のみintervalを調整
+    if adjust_for_high_fps and target_frames > 0:
         if available_frames > target_frames:
             optimal_interval = max(1, int(round(available_frames / target_frames)))
-            
+
             print(f"Video info: FPS={fps:.2f}, Total frames={total_frames}, Available frames={available_frames}")
             print(f"Target frames: {target_frames}, Optimal interval: {optimal_interval}")
             print(f"Adjusting interval from {original_interval} to {optimal_interval} for target frame count")
@@ -477,8 +473,14 @@ class Pi3BatchProcessor:
                 else:
                     print(f"Warning: Error during memory check: {e}")
 
-    def process_single_directory(self, input_path: str, output_path: str, interval: int = 1, dataset_type: str = None) -> str:
-        """単一ディレクトリまたは動画ファイルを処理"""
+    def process_single_directory(
+        self,
+        input_path: str,
+        output_path: str,
+        interval: int = 1,
+        processing_config: Optional[Dict[str, object]] = None,
+    ) -> str:
+        """Process a single scene video or image directory."""
         try:
             # 入力チェック
             if not os.path.exists(input_path):
@@ -502,27 +504,22 @@ class Pi3BatchProcessor:
             effective_interval = interval
             image_meta = None
 
-            # 動画ファイルかディレクトリかを判定
+            processing_config = processing_config or {}
+            video_skip_seconds = int(processing_config.get("video_skip_seconds", 0) or 0)
+            video_target_frames = int(processing_config.get("video_target_frames", 1500) or 0)
+            video_adjust_for_high_fps = bool(processing_config.get("video_adjust_for_high_fps", False))
+            image_target_frames = int(processing_config.get("image_target_frames", 1500) or 0)
+
             if input_path.endswith('.mp4'):
                 print(f"[GPU {self.device}] Processing video file")
-                video_datasets = ["walking_tours", "kinetics", "ego4d", "roomtours"]
-                adjust_for_high_fps = (dataset_type in video_datasets)
-                target_frames_map = {
-                    "roomtours": 200,
-                }
-                target_frames_env = 0
-                if dataset_type == "roomtours":
-                    target_frames_env = int(os.environ.get("ROOMTOURS_TARGET_FRAMES", "0") or 0)
-                target_frames_value = target_frames_env if target_frames_env > 0 else target_frames_map.get(dataset_type, 1500)
-                if dataset_type == "roomtours" and target_frames_value > 0:
-                    print(f"[GPU {self.device}] Target frames capped at {target_frames_value} for RoomTours")
+                if video_target_frames > 0:
+                    print(f"[GPU {self.device}] Target frames capped at {video_target_frames} for video sampling")
                 imgs = load_video_as_tensor_with_skip(
                     input_path,
                     interval=interval,
-                    skip_seconds=10,
-                    adjust_for_high_fps=adjust_for_high_fps,
-                    target_frames=target_frames_value,
-                    dataset_type=dataset_type,
+                    skip_seconds=video_skip_seconds,
+                    adjust_for_high_fps=video_adjust_for_high_fps,
+                    target_frames=video_target_frames,
                 ).to(self.device)
                 if self.save_correspondence:
                     image_meta = {
@@ -543,40 +540,15 @@ class Pi3BatchProcessor:
                     print(f"[GPU {self.device}] SKIP: No image files found in: {input_path}")
                     return "skip_no_images"
 
-                target_images = 500 if dataset_type == "zod" else 1500
                 total_images = len(image_files)
-
-                chunk_start = 0
-                chunk_end = total_images
                 loader_return = None
 
-                if dataset_type == "zod" and total_images > 500:
-                    output_filename = Path(output_path).name
-                    if output_filename.startswith("pi3_") and output_filename.endswith(".ply"):
-                        try:
-                            chunk_id = int(output_filename.replace("pi3_", "").replace(".ply", ""))
-                            chunk_idx = chunk_id - 1
-                            chunk_start = chunk_idx * 500
-                            chunk_end = min((chunk_idx + 1) * 500, total_images)
-                            print(f"[GPU {self.device}] Processing chunk {chunk_idx + 1}: images {chunk_start}-{chunk_end-1} of {total_images}")
-                        except ValueError:
-                            print(f"[GPU {self.device}] Warning: Could not parse chunk ID from {output_filename}")
-                    else:
-                        print(f"[GPU {self.device}] Warning: Unexpected output filename format: {output_filename}")
-
-                if dataset_type == "zod" and total_images > 500 and chunk_end - chunk_start <= 500:
-                    print(f"[GPU {self.device}] Found {total_images} images total, processing chunk {chunk_start}-{chunk_end-1} with interval={effective_interval}")
-                    loader_return = load_images_as_tensor_with_range(
-                        input_path,
-                        interval=effective_interval,
-                        start_idx=chunk_start,
-                        end_idx=chunk_end,
-                        PIXEL_LIMIT=self.pixel_limit,
-                        return_meta=self.save_correspondence,
+                if image_target_frames > 0 and total_images > image_target_frames:
+                    optimal_interval = max(1, int(round(total_images / image_target_frames)))
+                    print(
+                        f"[GPU {self.device}] Found {total_images} images, adjusting interval "
+                        f"from {effective_interval} to {optimal_interval} for target count {image_target_frames}"
                     )
-                elif total_images > target_images and dataset_type != "zod":
-                    optimal_interval = max(1, int(round(total_images / target_images)))
-                    print(f"[GPU {self.device}] Found {total_images} images, adjusting interval from {effective_interval} to {optimal_interval} for target count {target_images}")
                     effective_interval = optimal_interval
                     loader_return = load_images_as_tensor(
                         input_path,
@@ -585,7 +557,10 @@ class Pi3BatchProcessor:
                         return_meta=self.save_correspondence,
                     )
                 else:
-                    print(f"[GPU {self.device}] Found {total_images} images, using all images (≤ {target_images}), interval: {effective_interval}")
+                    print(
+                        f"[GPU {self.device}] Found {total_images} images, using all images "
+                        f"(≤ {image_target_frames or total_images}), interval: {effective_interval}"
+                    )
                     loader_return = load_images_as_tensor(
                         input_path,
                         interval=effective_interval,
@@ -792,253 +767,145 @@ class Pi3BatchProcessor:
             return "error"
 
 
-def get_dataset_directories(dataset_config: Dict, include_processed: bool = False) -> List[Tuple[str, str]]:
-    """Pi3の実際の入力要件に基づいてディレクトリリストを生成
+def has_images(directory: Path, image_extensions: List[str]) -> bool:
+    """Return True if the directory contains at least one supported image file."""
+    return any(directory.glob(ext) for ext in image_extensions)
 
-    include_processed: True の場合は、出力が既に存在するエントリも含める。
-    その場合は処理時にスキップされるため、統計上「skip_exists」にカウントされる。
-    """
-    dataset_type = dataset_config['type']
-    input_base = dataset_config['input_base']
-    output_base = dataset_config['output_base']
-    max_entries = int(dataset_config.get('max_entries', 0) or 0)
-    
-    base_path = Path(input_base)
-    directories = []
+
+def discover_recursive_image_directories(
+    input_base: str,
+    output_base: str,
+    include_processed: bool = False,
+) -> List[Tuple[str, str]]:
     image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.JPG', '*.JPEG', '*.PNG']
-    
-    def has_images(directory):
-        """ディレクトリに画像ファイルが存在するかチェック"""
-        return any(Path(directory).glob(ext) for ext in image_extensions)
-    
-    if dataset_type == "kinetics":
-        # Kinetics: class/video.mp4 構造
-        # 実際の構造: /groups/gag51402/datasets/kinetics700_mp4/[class]/[video].mp4
-        for class_dir in base_path.iterdir():
-            if class_dir.is_dir():
-                for video_file in class_dir.glob("*.mp4"):
-                    if video_file.is_file():
-                        class_name = class_dir.name
-                        video_name = video_file.stem
-                        output_file = Path(output_base) / class_name / video_name / "pi3.ply"
-                        if include_processed or (not output_file.exists()):
-                            directories.append((str(video_file), str(output_file)))
-    
-    elif dataset_type == "waymo":
-        # Waymo: scene/images/ 構造
-        # 実際の構造: /groups/gag51404/yamada/2025/CVPR/GaussianSTORM/data/waymo/processed/training/[scene]/images/[frame].jpg
-        for scene_dir in base_path.iterdir():
-            if scene_dir.is_dir():
-                images_dir = scene_dir / "images"
-                if images_dir.exists() and has_images(images_dir):
-                    scene_name = scene_dir.name
-                    output_file = Path(output_base) / scene_name / "pi3.ply"
-                    if include_processed or (not output_file.exists()):
-                        directories.append((str(images_dir), str(output_file)))
-    
-    elif dataset_type == "ego4d":
-        # Ego4D: clips/video_id.mp4 構造
-        # 実際の構造: /groups/gag51402/datasets/ego4d/v1/clips/[video_id].mp4
-        clips_dir = base_path / "clips"
-        if clips_dir.exists():
-            for video_file in clips_dir.glob("*.mp4"):
-                if video_file.is_file():
-                    video_id = video_file.stem
-                    output_file = Path(output_base) / video_id / "pi3.ply"
-                    if include_processed or (not output_file.exists()):
-                        directories.append((str(video_file), str(output_file)))
-    
-    elif dataset_type == "co3d":
-        # CO3D: category/sequence/images/ 構造
-        # 実際の構造: /groups/gag51402/datasets/co3d/[category]/[sequence]/images/[frame].jpg
-        for category_dir in base_path.iterdir():
-            if category_dir.is_dir() and not category_dir.name.endswith('.zip'):
-                for sequence_dir in category_dir.iterdir():
-                    if sequence_dir.is_dir():
-                        images_dir = sequence_dir / "images"
-                        if images_dir.exists() and has_images(images_dir):
-                            category_name = category_dir.name
-                            sequence_name = sequence_dir.name
-                            output_file = Path(output_base) / category_name / sequence_name / "pi3.ply"
-                            if include_processed or (not output_file.exists()):
-                                directories.append((str(images_dir), str(output_file)))
+    directories = []
 
-    elif dataset_type == "zod":
-        # ZOD: {drives|sequences}/<id>/camera_front_blur/*.jpg 構造
-        # 500枚以上の画像がある場合はチャンク分割して複数のシーンを生成
-        drives_dir = base_path / "drives"
-        if drives_dir.exists():
-            for drive_dir in drives_dir.iterdir():
-                if drive_dir.is_dir():
-                    cam_dir = drive_dir / "camera_front_blur"
-                    if cam_dir.exists() and has_images(cam_dir):
-                        # 画像数を確認してチャンク数を決定
-                        image_files = []
-                        for ext in image_extensions:
-                            image_files.extend(cam_dir.glob(ext))
-                        total_images = len(image_files)
-                        
-                        if total_images > 500:
-                            # チャンク分割: 500枚ごとに分割
-                            num_chunks = (total_images + 499) // 500  # 切り上げ
-                            for chunk_idx in range(num_chunks):
-                                output_file = Path(output_base) / f"drives_{drive_dir.name}" / f"pi3_{chunk_idx + 1}.ply"
-                                if include_processed or (not output_file.exists()):
-                                    directories.append((str(cam_dir), str(output_file)))
-                        else:
-                            # 従来通り単一ファイル
-                            output_file = Path(output_base) / f"drives_{drive_dir.name}" / "pi3_1.ply"
-                            if include_processed or (not output_file.exists()):
-                                directories.append((str(cam_dir), str(output_file)))
+    for root, _, _ in os.walk(input_base):
+        root_path = Path(root)
+        if not has_images(root_path, image_extensions):
+            continue
 
-        sequences_dir = base_path / "sequences"
-        if sequences_dir.exists():
-            for seq_dir in sequences_dir.iterdir():
-                if seq_dir.is_dir():
-                    cam_dir = seq_dir / "camera_front_blur"
-                    if cam_dir.exists() and has_images(cam_dir):
-                        # 画像数を確認してチャンク数を決定
-                        image_files = []
-                        for ext in image_extensions:
-                            image_files.extend(cam_dir.glob(ext))
-                        total_images = len(image_files)
-                        
-                        if total_images > 500:
-                            # チャンク分割: 500枚ごとに分割
-                            num_chunks = (total_images + 499) // 500  # 切り上げ
-                            for chunk_idx in range(num_chunks):
-                                output_file = Path(output_base) / f"sequences_{seq_dir.name}" / f"pi3_{chunk_idx + 1}.ply"
-                                if include_processed or (not output_file.exists()):
-                                    directories.append((str(cam_dir), str(output_file)))
-                        else:
-                            # 従来通り単一ファイル
-                            output_file = Path(output_base) / f"sequences_{seq_dir.name}" / "pi3_1.ply"
-                            if include_processed or (not output_file.exists()):
-                                directories.append((str(cam_dir), str(output_file)))
-    
-    elif dataset_type == "realestate10k":
-        for split_dir in base_path.iterdir():
-            if not split_dir.is_dir() or split_dir.name.startswith('.'):
-                continue
-            for scene_dir in split_dir.iterdir():
-                if not scene_dir.is_dir() or scene_dir.name.startswith('.'):
-                    continue
-                images_dir = scene_dir / "images"
-                if images_dir.exists() and has_images(images_dir):
-                    output_file = Path(output_base) / split_dir.name / scene_dir.name / "pi3.ply"
-                    if include_processed or (not output_file.exists()):
-                        directories.append((str(images_dir), str(output_file)))
-
-    elif dataset_type == "roomtours":
-        roomtours_scene_json = dataset_config.get("roomtours_scene_json")
-        if roomtours_scene_json:
-            print(f"[INFO] RoomTours: loading explicit scene targets from {roomtours_scene_json}")
-            directories = load_roomtours_entries_from_json(
-                scene_json_path=roomtours_scene_json,
-                input_base=input_base,
-                output_base=output_base,
-                include_processed=include_processed,
-            )
-            if max_entries > 0 and len(directories) > max_entries:
-                print(f"[INFO] RoomTours(JSON): limiting to first {max_entries} entries out of {len(directories)}")
-                directories = directories[:max_entries]
-            print(f"[INFO] RoomTours(JSON): selected {len(directories)} scenes for processing")
-            return directories
-
-        roomtours_entries = []
-        unsorted_entries = []
-        for channel_dir in base_path.iterdir():
-            if channel_dir.name.startswith("."):
-                continue
-            if channel_dir.is_dir():
-                # Pattern: <video_id>/scenes/*.mp4
-                direct_scenes_dir = channel_dir / "scenes"
-                if direct_scenes_dir.exists() and direct_scenes_dir.is_dir():
-                    for scene_file in direct_scenes_dir.glob("*.mp4"):
-                        if scene_file.is_file():
-                            output_file = Path(output_base) / channel_dir.name / scene_file.stem / "pi3.ply"
-                            if not include_processed and output_file.exists():
-                                continue
-                            if max_entries > 0:
-                                duration = get_video_duration_seconds(scene_file)
-                                roomtours_entries.append((duration, str(scene_file), str(output_file)))
-                            else:
-                                unsorted_entries.append((str(scene_file), str(output_file)))
-                    continue
-                # Pattern: <channel>/<video>/scenes/*.mp4
-                for video_dir in channel_dir.iterdir():
-                    if video_dir.name.startswith(".") or (not video_dir.is_dir()):
-                        continue
-                    scenes_dir = video_dir / "scenes"
-                    if scenes_dir.exists() and scenes_dir.is_dir():
-                        for scene_file in scenes_dir.glob("*.mp4"):
-                            if scene_file.is_file():
-                                output_file = Path(output_base) / channel_dir.name / video_dir.name / scene_file.stem / "pi3.ply"
-                                if not include_processed and output_file.exists():
-                                    continue
-                                if max_entries > 0:
-                                    duration = get_video_duration_seconds(scene_file)
-                                    roomtours_entries.append((duration, str(scene_file), str(output_file)))
-                                else:
-                                    unsorted_entries.append((str(scene_file), str(output_file)))
-            elif channel_dir.is_file() and channel_dir.suffix.lower() == ".mp4":
-                # Pattern: raw videos directly under base path
-                output_file = Path(output_base) / channel_dir.stem / "pi3.ply"
-                if not include_processed and output_file.exists():
-                    continue
-                if max_entries > 0:
-                    duration = get_video_duration_seconds(channel_dir)
-                    roomtours_entries.append((duration, str(channel_dir), str(output_file)))
-                else:
-                    unsorted_entries.append((str(channel_dir), str(output_file)))
-        if max_entries > 0:
-            roomtours_entries.sort(key=lambda x: x[0], reverse=True)
-            total_candidates = len(roomtours_entries)
-            if total_candidates > max_entries:
-                print(f"[INFO] RoomTours: limiting to top {max_entries} scenes by duration out of {total_candidates} candidates")
-                roomtours_entries = roomtours_entries[:max_entries]
-            print(f"[INFO] RoomTours: selected {len(roomtours_entries)} scenes for processing (limit {max_entries}).")
-            directories.extend((input_path, output_path) for _, input_path, output_path in roomtours_entries)
+        rel_path = os.path.relpath(root, input_base)
+        if root_path.name == "images":
+            scene_name = root_path.parent.name
+            output_file = Path(output_base) / scene_name / "images" / "pi3.ply"
         else:
-            print(f"[INFO] RoomTours: processing all remaining scenes without duration sorting. Total candidates: {len(unsorted_entries)}")
-            directories.extend(unsorted_entries)
+            output_file = Path(output_base) / rel_path / "pi3.ply"
 
-    elif dataset_type == "walking_tours":
-        # Walking Tours: video/ ディレクトリ内の動画ファイルを検索
-        # Expected layout: <walking_tours_root>/video/[video_name].mp4
-        video_dir = base_path / "video"
-        if video_dir.exists():
-            for video_file in video_dir.glob("*.mp4"):
-                if video_file.is_file():
-                    video_name = video_file.stem  # ファイル名から拡張子を除いた部分
-                    output_file = Path(output_base) / video_name / "pi3.ply"
-                    if include_processed or (not output_file.exists()):
-                        directories.append((str(video_file), str(output_file)))
-    
-    elif dataset_type == "custom":
-        # カスタム: 任意のディレクトリ構造
-        # 画像を含むディレクトリを再帰的に検索
-        for root, dirs, files in os.walk(input_base):
-            has_images_found = False
-            for ext in image_extensions:
-                if list(Path(root).glob(ext)):
-                    has_images_found = True
-                    break
-            
-            if has_images_found:
-                rel_path = os.path.relpath(root, input_base)
-                # ScanNet用の構造: scene_name/images/pi3.ply
-                if "images" in root:
-                    # images/ ディレクトリ内の場合、親ディレクトリ名を使用
-                    scene_name = os.path.basename(os.path.dirname(root))
-                    output_file = Path(output_base) / scene_name / "images" / "pi3.ply"
-                else:
-                    # 通常の場合
-                    output_file = Path(output_base) / rel_path / "pi3.ply"
-                if include_processed or (not output_file.exists()):
-                    directories.append((root, str(output_file)))
-    
+        if include_processed or (not output_file.exists()):
+            directories.append((root, str(output_file)))
+
     return directories
+
+
+def discover_roomtours_scene_directories(
+    dataset_config: Dict[str, object],
+    include_processed: bool = False,
+) -> List[Tuple[str, str]]:
+    input_base = str(dataset_config['input_base'])
+    output_base = str(dataset_config['output_base'])
+    max_entries = int(dataset_config.get('max_entries', 0) or 0)
+    scene_json = dataset_config.get("scene_json")
+
+    base_path = Path(input_base)
+    directories: List[Tuple[str, str]] = []
+
+    if scene_json:
+        print(f"[INFO] RoomTours: loading explicit scene targets from {scene_json}")
+        directories = load_roomtours_entries_from_json(
+            scene_json_path=str(scene_json),
+            input_base=input_base,
+            output_base=output_base,
+            include_processed=include_processed,
+        )
+        if max_entries > 0 and len(directories) > max_entries:
+            print(f"[INFO] RoomTours(JSON): limiting to first {max_entries} entries out of {len(directories)}")
+            directories = directories[:max_entries]
+        print(f"[INFO] RoomTours(JSON): selected {len(directories)} scenes for processing")
+        return directories
+
+    prioritized_entries = []
+    unsorted_entries = []
+
+    for channel_dir in base_path.iterdir():
+        if channel_dir.name.startswith("."):
+            continue
+
+        if channel_dir.is_dir():
+            direct_scenes_dir = channel_dir / "scenes"
+            if direct_scenes_dir.exists() and direct_scenes_dir.is_dir():
+                for scene_file in direct_scenes_dir.glob("*.mp4"):
+                    if not scene_file.is_file():
+                        continue
+                    output_file = Path(output_base) / channel_dir.name / scene_file.stem / "pi3.ply"
+                    if not include_processed and output_file.exists():
+                        continue
+                    if max_entries > 0:
+                        duration = get_video_duration_seconds(scene_file)
+                        prioritized_entries.append((duration, str(scene_file), str(output_file)))
+                    else:
+                        unsorted_entries.append((str(scene_file), str(output_file)))
+                continue
+
+            for video_dir in channel_dir.iterdir():
+                if video_dir.name.startswith(".") or (not video_dir.is_dir()):
+                    continue
+                scenes_dir = video_dir / "scenes"
+                if not scenes_dir.exists() or (not scenes_dir.is_dir()):
+                    continue
+                for scene_file in scenes_dir.glob("*.mp4"):
+                    if not scene_file.is_file():
+                        continue
+                    output_file = Path(output_base) / channel_dir.name / video_dir.name / scene_file.stem / "pi3.ply"
+                    if not include_processed and output_file.exists():
+                        continue
+                    if max_entries > 0:
+                        duration = get_video_duration_seconds(scene_file)
+                        prioritized_entries.append((duration, str(scene_file), str(output_file)))
+                    else:
+                        unsorted_entries.append((str(scene_file), str(output_file)))
+        elif channel_dir.is_file() and channel_dir.suffix.lower() == ".mp4":
+            output_file = Path(output_base) / channel_dir.stem / "pi3.ply"
+            if not include_processed and output_file.exists():
+                continue
+            if max_entries > 0:
+                duration = get_video_duration_seconds(channel_dir)
+                prioritized_entries.append((duration, str(channel_dir), str(output_file)))
+            else:
+                unsorted_entries.append((str(channel_dir), str(output_file)))
+
+    if max_entries > 0:
+        prioritized_entries.sort(key=lambda x: x[0], reverse=True)
+        total_candidates = len(prioritized_entries)
+        if total_candidates > max_entries:
+            print(f"[INFO] RoomTours: limiting to top {max_entries} scenes by duration out of {total_candidates} candidates")
+            prioritized_entries = prioritized_entries[:max_entries]
+        print(f"[INFO] RoomTours: selected {len(prioritized_entries)} scenes for processing (limit {max_entries}).")
+        directories.extend((input_path, output_path) for _, input_path, output_path in prioritized_entries)
+    else:
+        print(f"[INFO] RoomTours: processing all remaining scenes without duration sorting. Total candidates: {len(unsorted_entries)}")
+        directories.extend(unsorted_entries)
+
+    return directories
+
+
+DISCOVERY_HANDLERS = {
+    "recursive_images": lambda config, include_processed=False: discover_recursive_image_directories(
+        str(config["input_base"]),
+        str(config["output_base"]),
+        include_processed=include_processed,
+    ),
+    "roomtours_scenes": discover_roomtours_scene_directories,
+}
+
+
+def get_dataset_directories(dataset_config: Dict, include_processed: bool = False) -> List[Tuple[str, str]]:
+    """Resolve input/output pairs from the configured input layout."""
+    layout = dataset_config["layout"]
+    handler = DISCOVERY_HANDLERS.get(layout)
+    if handler is None:
+        raise ValueError(f"Unsupported layout: {layout}")
+    return handler(dataset_config, include_processed=include_processed)
 
 def worker_process(
     gpu_id: int,
@@ -1046,7 +913,7 @@ def worker_process(
     interval: int,
     ckpt: str,
     results_queue,
-    dataset_type: str = None,
+    processing_config: Optional[Dict[str, object]] = None,
     save_correspondence: bool = False,
     pixel_limit: int = 255000,
     overwrite_existing: bool = False,
@@ -1076,7 +943,12 @@ def worker_process(
     for i, (input_path, output_path) in enumerate(directories, 1):
         print(f"[GPU {gpu_id}] Progress: {i}/{total}")
         
-        result = processor.process_single_directory(input_path, output_path, interval, dataset_type)
+        result = processor.process_single_directory(
+            input_path,
+            output_path,
+            interval,
+            processing_config=processing_config,
+        )
         
         if result in results:
             results[result] += 1
@@ -1108,10 +980,38 @@ def split_directories(directories: List, num_gpus: int) -> List[List]:
     
     return split_dirs
 
+
+LAYOUT_DESCRIPTIONS = {
+    "recursive_images": "Generic recursive image-directory scan",
+    "roomtours_scenes": "RoomTours segmented scenes layout",
+}
+
+
+def build_runtime_config(args: argparse.Namespace) -> Dict[str, object]:
+    layout = args.layout
+    if layout not in LAYOUT_DESCRIPTIONS:
+        raise ValueError(f"Unknown layout: {layout}")
+
+    return {
+        "layout": layout,
+        "input_base": args.input_base,
+        "output_base": args.output_base,
+        "description": LAYOUT_DESCRIPTIONS[layout],
+        "preserve_order": args.preserve_order,
+        "scene_json": args.scene_json,
+        "max_entries": args.max_entries,
+        "processing": {
+            "video_skip_seconds": args.video_skip_seconds,
+            "video_target_frames": args.video_target_frames,
+            "video_adjust_for_high_fps": args.video_adjust_for_high_fps,
+            "image_target_frames": args.image_target_frames,
+        },
+    }
+
 def main():
-    parser = argparse.ArgumentParser(description="Batch process multiple datasets with Pi3 model")
-    parser.add_argument("--config", type=str, required=True,
-                        help="Dataset configuration (kinetics, waymo, ego4d, co3d, zod, walking_tours, roomtours, realestate10k, or custom)")
+    parser = argparse.ArgumentParser(description="Batch process scene videos or image directories with Pi3")
+    parser.add_argument("--layout", "--config", dest="layout", required=True,
+                        help="Input layout (roomtours_scenes or recursive_images)")
     parser.add_argument("--input_base", type=str, required=True,
                         help="Input base directory")
     parser.add_argument("--output_base", type=str, required=True,
@@ -1134,81 +1034,29 @@ def main():
                         help="Approximate pixel budget per resized frame (e.g., 255000 for ~510x500)")
     parser.add_argument("--max_entries", type=int, default=0,
                         help="Limit total entries processed (0 = no limit)")
-    parser.add_argument("--roomtours_scene_json", type=str, default=None,
-                        help="Optional JSON list for RoomTours-only targeted rerun (video_id/scene_dir or source_ply)")
+    parser.add_argument("--scene_json", "--roomtours_scene_json", dest="scene_json", type=str, default=None,
+                        help="Optional JSON list describing explicit scene targets")
+    parser.add_argument("--preserve_order", action='store_true',
+                        help="Preserve discovered input order instead of sorting by input path")
+    parser.add_argument("--video_skip_seconds", type=int, default=0,
+                        help="Number of initial seconds to skip when sampling videos")
+    parser.add_argument("--video_target_frames", type=int, default=1500,
+                        help="Target frame count for video sampling when interval auto-adjust is enabled")
+    parser.add_argument("--video_adjust_for_high_fps", action='store_true',
+                        help="Increase the video sampling interval when the discovered frame count exceeds the target")
+    parser.add_argument("--image_target_frames", type=int, default=1500,
+                        help="Target image count for image-directory inputs before interval auto-adjust")
     parser.add_argument("--overwrite_existing", action='store_true',
                         help="Overwrite existing output files instead of skipping")
     
     args = parser.parse_args()
-    
-    # データセット設定
-    dataset_configs = {
-        "kinetics": {
-            "type": "kinetics",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "Kinetics dataset - class/video.mp4 structure"
-        },
-        "waymo": {
-            "type": "waymo",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "Waymo dataset - scene/images/ structure"
-        },
-        "ego4d": {
-            "type": "ego4d",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "Ego4D dataset - clips/video_id.mp4 structure"
-        },
-        "co3d": {
-            "type": "co3d",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "CO3D dataset - category/sequence/images/ structure"
-        },
-        "zod": {
-            "type": "zod",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "ZOD dataset - drives|sequences/*/camera_front_blur image directories"
-        },
-        "walking_tours": {
-            "type": "walking_tours",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "Walking Tours dataset - video/video_name.mp4 structure"
-        },
-        "roomtours": {
-            "type": "roomtours",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "RoomTours dataset - channel/video/scenes/scene-*.mp4 structure",
-            "preserve_order": True,
-            "roomtours_scene_json": args.roomtours_scene_json,
-        },
-        "realestate10k": {
-            "type": "realestate10k",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "RealEstate10k converted dataset - split/scene/images structure",
-            "preserve_order": True
-        },
-        "custom": {
-            "type": "custom",
-            "input_base": args.input_base,
-            "output_base": args.output_base,
-            "description": "Custom dataset with arbitrary structure"
-        }
-    }
-    
-    if args.config not in dataset_configs:
-        print(f"ERROR: Unknown dataset config: {args.config}")
-        print(f"Available configs: {list(dataset_configs.keys())}")
+    try:
+        dataset_config = build_runtime_config(args)
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        print(f"Available layouts: {sorted(LAYOUT_DESCRIPTIONS.keys())}")
         return
-    
-    dataset_config = dataset_configs[args.config]
-    dataset_config['max_entries'] = args.max_entries
+
     print(f"Processing dataset: {dataset_config['description']}")
     
     # 入力・出力ディレクトリのチェック
@@ -1221,6 +1069,7 @@ def main():
     # ディレクトリリストを取得
     print("Scanning for directories to process...")
     directories = get_dataset_directories(dataset_config, include_processed=args.include_processed)
+    processing_config = dict(dataset_config.get("processing", {}))
 
     preserve_order = dataset_config.get("preserve_order", False)
     if not preserve_order:
@@ -1254,6 +1103,9 @@ def main():
     # GPU数を確認
     available_gpus = torch.cuda.device_count()
     num_gpus = min(args.num_gpus, available_gpus)
+    if num_gpus < 1:
+        print("ERROR: No CUDA devices available")
+        return
     print(f"Using {num_gpus} GPUs (out of {available_gpus} available)")
     
     # ディレクトリをGPU数に分割
@@ -1282,7 +1134,7 @@ def main():
                     args.interval,
                     args.ckpt,
                     results_queue,
-                    args.config,
+                    processing_config,
                     args.save_correspondence,
                     args.pixel_limit,
                     args.overwrite_existing,

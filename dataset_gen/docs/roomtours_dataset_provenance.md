@@ -40,11 +40,10 @@
 - Added config-driven stage entrypoints:
   - `scripts/submit_stage.sh`
   - `scripts/run_stage.sh`
-- Added dataset configs:
+- Added dataset configs and shared config fragments:
   - `configs/datasets/*.sh`
-- Archived the historical dataset-specific submit wrappers:
-  - `scripts/legacy_submit/`
-- Kept the reconstructed historical wrapper logic only as a source for the config defaults and provenance notes.
+  - `configs/base/*.sh`
+- Collapsed the historical dataset-specific submit wrappers into config defaults and provenance notes instead of keeping them as runnable scripts.
 
 ## Release status
 

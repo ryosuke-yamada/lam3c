@@ -29,7 +29,6 @@ The following paths are maintained as part of this repository's dataset-generati
 - `scripts/common/`
 - `scripts/run_stage.sh`
 - `scripts/submit_stage.sh`
-- `scripts/legacy_submit/`
 - `scripts/segmentation/`
 - `scripts/pi3/`
 - `scripts/vggt/`
@@ -41,9 +40,7 @@ This includes scripts that were reconstructed from job logs or adapted from the 
 Some files under `scripts/` were derived from pre-existing implementation code and then modified to run from `dataset_gen/` as a self-contained pipeline. They are repository-maintained integration code, not vendored upstream snapshots:
 
 - `scripts/pi3/pi3_batch_datasets.py`
-- `scripts/pi3/pi3_batch_legacy.py`
 - `scripts/vggt/demo_colmap.py`
-- files under `scripts/legacy_submit/`
 
 They should be reviewed carefully before assigning a final top-level license to `dataset_gen/`.
 

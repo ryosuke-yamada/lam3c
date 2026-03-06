@@ -14,6 +14,7 @@ The pipeline covered here is:
 ## Layout
 
 - `configs/datasets/`: dataset-specific defaults for segmentation / Pi3 / VGGT
+- `configs/base/`: shared stage defaults and RoomTours helper fragments
 - `docs/roomtours_dataset_provenance.md`: dataset-by-dataset provenance matrix
 - `scripts/submit_stage.sh`: generic qsub entrypoint for all stages
 - `scripts/run_stage.sh`: generic runtime entrypoint executed inside the job
@@ -21,7 +22,6 @@ The pipeline covered here is:
 - `scripts/segmentation/`: raw video -> `inside_only.avi` -> `scenes/*.mp4`
 - `scripts/pi3/`: `scenes/*.mp4` -> `pi3.ply`
 - `scripts/vggt/`: Pi3-aligned frame sampling -> VGGT / COLMAP export
-- `scripts/legacy_submit/`: archived historical dataset-specific submit wrappers
 - `third_party/Pi3/`: vendored Pi3 runtime code
 - `third_party/vggt/`: vendored VGGT runtime code
 - `setup.sh`: creates local virtual environments for the pipeline
@@ -52,6 +52,8 @@ The primary workflow is now config-driven:
 ```
 
 `submit_stage.sh` reads the dataset defaults from `configs/datasets/*.sh`, applies any environment-variable overrides currently set in the shell, and submits the generic runtime script `scripts/run_stage.sh`.
+
+The dataset configs are intentionally thin. Shared PBS defaults live under `configs/base/`, and the RoomTours-family datasets derive their stage names, log prefixes, and layout defaults from `configs/base/roomtours_release_common.sh`.
 
 The wrappers still contain cluster-specific PBS resource directives. Adjust queue / project settings for your environment before release if needed.
 

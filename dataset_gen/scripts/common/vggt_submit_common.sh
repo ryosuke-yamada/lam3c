@@ -97,7 +97,6 @@ imgs = load_video_as_tensor_with_skip(
     PIXEL_LIMIT=pixel_limit,
     adjust_for_high_fps=True,
     target_frames=target_frames,
-    dataset_type="roomtours",
 )
 
 if imgs.numel() == 0:
