@@ -10,7 +10,7 @@ STAGE=${1:-${STAGE:-}}
 DATASET_CONFIG=${2:-${DATASET_CONFIG:-}}
 
 if [ -z "$STAGE" ] || [ -z "$DATASET_CONFIG" ]; then
-  echo "Usage: $0 <segmentation|pi3|vggt> <dataset_config>" >&2
+  echo "Usage: $0 <segmentation|pi3> <dataset_config>" >&2
   exit 1
 fi
 
@@ -56,25 +56,6 @@ case "$STAGE" in
     START_MESSAGE=${START_MESSAGE:-$DATASET_LABEL}
 
     dataset_gen_run_pi3_submit
-    ;;
-
-  vggt)
-    SCRIPT_DIR="$PROJECT_DIR/scripts/vggt"
-    source "$PROJECT_DIR/scripts/common/vggt_submit_common.sh"
-
-    VIDEO_BASE=${VIDEO_BASE:-$(dataset_gen_get_prefixed_var VGGT VIDEO_BASE)}
-    PI3_BASE=${PI3_BASE:-$(dataset_gen_get_prefixed_var VGGT PI3_BASE)}
-    OUTPUT_BASE=${OUTPUT_BASE:-$(dataset_gen_get_prefixed_var VGGT OUTPUT_BASE)}
-    WORK_BASE_REL=${WORK_BASE_REL:-$(dataset_gen_get_prefixed_var VGGT WORK_BASE_REL)}
-    WORK_BASE=${WORK_BASE:-$PROJECT_DIR/${WORK_BASE_REL:-tmp/vggt}}
-    TARGET_IMAGES=${TARGET_IMAGES:-$(dataset_gen_get_prefixed_var VGGT TARGET_IMAGES)}
-    PIXEL_LIMIT=${PIXEL_LIMIT:-$(dataset_gen_get_prefixed_var VGGT PIXEL_LIMIT)}
-    INTERVAL=${INTERVAL:-$(dataset_gen_get_prefixed_var VGGT INTERVAL)}
-    CONF_THRES_VALUE=${CONF_THRES_VALUE:-$(dataset_gen_get_prefixed_var VGGT CONF_THRES_VALUE)}
-    NUM_SHARDS=${NUM_SHARDS:-$(dataset_gen_get_prefixed_var VGGT NUM_SHARDS)}
-    LOG_BASE="$(dataset_gen_get_prefixed_var VGGT LOG_PREFIX).${PBS_JOBID:-noid}.${PBS_ARRAY_INDEX:-noidx}"
-
-    dataset_gen_run_vggt_submit
     ;;
 
   *)

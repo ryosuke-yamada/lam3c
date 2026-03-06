@@ -51,19 +51,3 @@ dataset_gen_apply_roomtours_pi3_defaults() {
   PI3_TARGET_FRAMES=${PI3_TARGET_FRAMES:-${ROOMTOURS_TARGET_FRAMES:-400}}
   PI3_IMAGE_TARGET_FRAMES=${PI3_IMAGE_TARGET_FRAMES:-1500}
 }
-
-
-dataset_gen_apply_roomtours_vggt_defaults() {
-  : "${ROOMTOURS_SEGMENT_ROOT:?ROOMTOURS_SEGMENT_ROOT is required}"
-  : "${ROOMTOURS_PI3_OUTPUT_ROOT:?ROOMTOURS_PI3_OUTPUT_ROOT is required}"
-  : "${ROOMTOURS_VGGT_OUTPUT_ROOT:?ROOMTOURS_VGGT_OUTPUT_ROOT is required}"
-
-  local vggt_suffix_dash="${ROOMTOURS_VGGT_SUFFIX_DASH:-}"
-  local vggt_suffix_underscore="${ROOMTOURS_VGGT_SUFFIX_UNDERSCORE:-$(dataset_gen_roomtours_normalize_log_suffix "$vggt_suffix_dash")}"
-
-  VGGT_JOB_NAME=${VGGT_JOB_NAME:-$(dataset_gen_roomtours_append_suffix "vggt-roomtours" "$vggt_suffix_dash" "-")}
-  VGGT_LOG_PREFIX=${VGGT_LOG_PREFIX:-$(dataset_gen_roomtours_append_suffix "vggt_roomtours" "$vggt_suffix_underscore" "_")}
-  VGGT_VIDEO_BASE=${VGGT_VIDEO_BASE:-$ROOMTOURS_SEGMENT_ROOT}
-  VGGT_PI3_BASE=${VGGT_PI3_BASE:-$ROOMTOURS_PI3_OUTPUT_ROOT}
-  VGGT_OUTPUT_BASE=${VGGT_OUTPUT_BASE:-$ROOMTOURS_VGGT_OUTPUT_ROOT}
-}

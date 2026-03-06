@@ -42,7 +42,6 @@ dataset_gen_stage_prefix() {
   case "$1" in
     segmentation) printf 'SEG\n' ;;
     pi3) printf 'PI3\n' ;;
-    vggt) printf 'VGGT\n' ;;
     *)
       echo "[ERROR] Unsupported stage: $1" >&2
       exit 1

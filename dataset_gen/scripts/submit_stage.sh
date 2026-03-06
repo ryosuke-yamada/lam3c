@@ -10,7 +10,7 @@ STAGE=${1:-}
 DATASET_CONFIG=${2:-}
 
 if [ -z "$STAGE" ] || [ -z "$DATASET_CONFIG" ]; then
-  echo "Usage: $0 <segmentation|pi3|vggt> <dataset_config>" >&2
+  echo "Usage: $0 <segmentation|pi3> <dataset_config>" >&2
   exit 1
 fi
 
@@ -37,13 +37,24 @@ fi
 echo "[INFO] stage: $STAGE"
 echo "[INFO] dataset: $DATASET_ID"
 echo "[INFO] config: $DATASET_CONFIG_PATH"
-echo "[INFO] qsub -N $JOB_NAME -q $QUEUE -P $PROJECT_CODE -l select=$SELECT_SPEC -l walltime=$WALLTIME"
+QSUB_ARGS=(
+  -V
+  -N "$JOB_NAME"
+  -q "$QUEUE"
+  -P "$PROJECT_CODE"
+  -l "select=$SELECT_SPEC"
+  -l "walltime=$WALLTIME"
+)
 
-qsub -V \
-  -N "$JOB_NAME" \
-  -q "$QUEUE" \
-  -P "$PROJECT_CODE" \
-  -l "select=$SELECT_SPEC" \
-  -l "walltime=$WALLTIME" \
+if [ -n "${QSUB_AFTEROK:-}" ]; then
+  echo "[INFO] dependency: afterok:$QSUB_AFTEROK"
+  QSUB_ARGS+=(-W "depend=afterok:$QSUB_AFTEROK")
+fi
+
+echo "[INFO] qsub ${QSUB_ARGS[*]} -v STAGE=$STAGE,DATASET_CONFIG=$DATASET_CONFIG_PATH $PROJECT_DIR/scripts/run_stage.sh"
+
+QSUB_RESULT=$(qsub "${QSUB_ARGS[@]}" \
   -v "STAGE=$STAGE,DATASET_CONFIG=$DATASET_CONFIG_PATH" \
-  "$PROJECT_DIR/scripts/run_stage.sh"
+  "$PROJECT_DIR/scripts/run_stage.sh")
+
+printf '%s\n' "$QSUB_RESULT"

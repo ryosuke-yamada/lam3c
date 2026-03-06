@@ -7,14 +7,12 @@ This file defines the intended boundary between `dataset_gen`-maintained code an
 The following directories are vendored copies of external projects and must remain under their own upstream licenses:
 
 - `third_party/Pi3/`
-- `third_party/vggt/`
 
 These directories are excluded from any future top-level `dataset_gen/LICENSE` unless that file explicitly says otherwise.
 
 Refer to `THIRD_PARTY.md` and the upstream license files stored inside each vendored directory:
 
 - `third_party/Pi3/LICENSE`
-- `third_party/vggt/LICENSE.txt`
 
 ## 2. `dataset_gen`-maintained code
 
@@ -28,10 +26,10 @@ The following paths are maintained as part of this repository's dataset-generati
 - `docs/`
 - `scripts/common/`
 - `scripts/run_stage.sh`
+- `scripts/submit_pipeline.sh`
 - `scripts/submit_stage.sh`
 - `scripts/segmentation/`
 - `scripts/pi3/`
-- `scripts/vggt/`
 
 This includes scripts that were reconstructed from job logs or adapted from the authors' internal working tree in order to document the released dataset pipeline.
 
@@ -40,7 +38,6 @@ This includes scripts that were reconstructed from job logs or adapted from the 
 Some files under `scripts/` were derived from pre-existing implementation code and then modified to run from `dataset_gen/` as a self-contained pipeline. They are repository-maintained integration code, not vendored upstream snapshots:
 
 - `scripts/pi3/pi3_batch_datasets.py`
-- `scripts/vggt/demo_colmap.py`
 
 They should be reviewed carefully before assigning a final top-level license to `dataset_gen/`.
 
@@ -49,7 +46,6 @@ They should be reviewed carefully before assigning a final top-level license to 
 No model checkpoints or weights are redistributed inside `dataset_gen/`.
 
 - `Pi3` weights are not vendored here.
-- `VGGT` weights are not vendored here.
 
 The current code paths rely on upstream download mechanisms or user-provided environments at runtime. Any future release must keep the treatment of weights separate from the treatment of source code.
 

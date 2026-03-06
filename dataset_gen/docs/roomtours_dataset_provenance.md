@@ -10,7 +10,6 @@
 1. Raw videos are collected under `DATA/RoomTours/raw_videos/*` or `DATA/HouseTours/data/files/official-housetour-dataset/videos`.
 2. Scene segmentation writes `inside_only.avi` and `scenes/scene-*.mp4` under `DATA/RoomTours/processed_label_segments_*`.
 3. Pi3 consumes `scenes/scene-*.mp4` and writes `pi3.ply` under each scene directory.
-4. `roomtours_vggt_v2_200` additionally re-samples frames from `processed_label_segments_v2`, using existing `roomtours_pi3_v2` coverage as a prerequisite, then runs VGGT / COLMAP export.
 
 ## Dataset matrix
 
@@ -26,7 +25,6 @@
 | `DATA/roomtours_pi3_batch_v6` | `DATA/RoomTours/raw_videos/batch_v6_download` | `DATA/RoomTours/processed_label_segments_batch_v6` | `scripts/submit_stage.sh segmentation roomtours_batch_v6` | `scripts/submit_stage.sh pi3 roomtours_batch_v6` | `400` | `11705 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
 | `DATA/roomtours_pi3_batch_v7` | `DATA/RoomTours/raw_videos/batch_v7_download` | `DATA/RoomTours/processed_label_segments_batch_v7` | `scripts/submit_stage.sh segmentation roomtours_batch_v7` | `scripts/submit_stage.sh pi3 roomtours_batch_v7` | `400` | `8302 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
 | `DATA/roomtours_pi3_batch_v8` | `DATA/RoomTours/raw_videos/batch_v8_download` | `DATA/RoomTours/processed_label_segments_batch_v8` | `scripts/submit_stage.sh segmentation roomtours_batch_v8` | `scripts/submit_stage.sh pi3 roomtours_batch_v8` | `400` | `19871 pi3.ply` | Stage1 wrapper reconstructed from archived logs. |
-| `DATA/roomtours_vggt_v2_200` | `DATA/RoomTours/raw_videos/1st_download` | `DATA/RoomTours/processed_label_segments_v2` | `scripts/submit_stage.sh segmentation roomtours_vggt_v2_200` | `scripts/submit_stage.sh vggt roomtours_vggt_v2_200` | `200` images | `1773 points3D.bin`, `355321 jpg` | Requires existing `DATA/roomtours_pi3_v2` outputs to decide which scenes to process. |
 
 ## Key evidence used during reconstruction
 
@@ -47,4 +45,4 @@
 
 ## Release status
 
-This directory now vendors the required Pi3 / VGGT runtime code and uses repo-relative paths. The primary job interface is the config-driven pair `scripts/submit_stage.sh` and `scripts/run_stage.sh`. The remaining environment-specific pieces are the PBS defaults and the dataset-root defaults embedded in `configs/datasets/*.sh`.
+This directory now vendors the required Pi3 runtime code and uses repo-relative paths. The primary job interfaces are `scripts/submit_pipeline.sh`, `scripts/submit_stage.sh`, and `scripts/run_stage.sh`. The remaining environment-specific pieces are the PBS defaults and the dataset-root defaults embedded in `configs/datasets/*.sh`.
