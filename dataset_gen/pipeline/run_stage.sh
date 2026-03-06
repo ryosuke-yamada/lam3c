@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_DIR=$(cd "$SCRIPT_ROOT/.." && pwd)
 
-source "$PROJECT_DIR/scripts/common/config_common.sh"
+source "$PROJECT_DIR/pipeline/common/config_common.sh"
 
 STAGE=${1:-${STAGE:-}}
 DATASET_CONFIG=${2:-${DATASET_CONFIG:-}}
@@ -18,8 +18,8 @@ dataset_gen_load_config "$PROJECT_DIR" "$DATASET_CONFIG"
 
 case "$STAGE" in
   segmentation)
-    SCRIPT_DIR="$PROJECT_DIR/scripts/segmentation"
-    source "$PROJECT_DIR/scripts/common/segmentation_submit_common.sh"
+    SCRIPT_DIR="$PROJECT_DIR/pipeline/segmentation"
+    source "$PROJECT_DIR/pipeline/common/segmentation_submit_common.sh"
 
     VIDEO_ROOT=${VIDEO_ROOT:-$(dataset_gen_get_prefixed_var SEG VIDEO_ROOT)}
     OUTPUT_ROOT=${OUTPUT_ROOT:-$(dataset_gen_get_prefixed_var SEG OUTPUT_ROOT)}
@@ -33,8 +33,8 @@ case "$STAGE" in
     ;;
 
   pi3)
-    SCRIPT_DIR="$PROJECT_DIR/scripts/pi3"
-    source "$PROJECT_DIR/scripts/common/pi3_submit_common.sh"
+    SCRIPT_DIR="$PROJECT_DIR/pipeline/pi3"
+    source "$PROJECT_DIR/pipeline/common/pi3_submit_common.sh"
 
     LAYOUT=${LAYOUT:-$(dataset_gen_get_prefixed_var PI3 LAYOUT)}
     INPUT_BASE=${INPUT_BASE:-$(dataset_gen_get_prefixed_var PI3 INPUT_BASE)}

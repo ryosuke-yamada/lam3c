@@ -5,8 +5,7 @@ dataset_gen_resolve_config_path() {
   local config_ref="$2"
 
   if [ -z "$config_ref" ]; then
-    echo "[ERROR] DATASET_CONFIG is required" >&2
-    exit 1
+    config_ref=default
   fi
 
   if [ -f "$config_ref" ]; then

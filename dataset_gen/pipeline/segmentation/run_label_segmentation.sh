@@ -177,7 +177,3 @@ print(f"[Stage2] Wrote {info['segments']} labeled segments.")
 PY
 
 echo "Done. Outputs in $OUTDIR (inside_only.avi, scenes/)"
-
-# ./scripts/run_label_segmentation.sh \
-#   "/groups/gag51402/datasets/RoomTours/raw_videos/1st_download/Crisna_at_Remax/2OFrEwK6Wvc_For Sale ｜ WALKTHROUGH ｜ CRISNA ｜ RE⧸MAX AMANZIMTOTI.mp4" \
-#   "scripts/test/2OFrEwK6Wvc"

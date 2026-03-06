@@ -1,17 +1,21 @@
 # Dataset Configs
 
-Each file in `datasets/` defines the thin dataset-specific layer used by:
+The public pipeline now uses a single default config:
 
-- `scripts/submit_stage.sh`
-- `scripts/run_stage.sh`
+- `datasets/default.sh`
 
-Shared stage defaults and helper fragments live under `base/`. The RoomTours-family configs derive most stage names, log prefixes, and Pi3 layout defaults from `base/roomtours_release_common.sh`.
+This file defines:
 
-Typical usage:
+- the canonical input manifest (`../video_lists.csv`)
+- the default download / segmentation / Pi3 output roots
+- the default PBS settings for segmentation and Pi3
+
+Typical usage does not need an explicit config name anymore:
 
 ```bash
-./scripts/submit_stage.sh segmentation roomtours_batch_v8
-./scripts/submit_stage.sh pi3 roomtours_batch_v8
+python download.py
+python segmentation.py
+python pi3.py
 ```
 
-Environment variables can override the defaults at submission time.
+If needed, another config file path can still be passed as the optional first argument to each public entrypoint, and any variable can be overridden temporarily with `--set NAME=VALUE`.

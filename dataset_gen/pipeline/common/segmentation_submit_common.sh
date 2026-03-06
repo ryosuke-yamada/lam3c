@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$PROJECT_DIR/scripts/common/job_common.sh"
+source "$PROJECT_DIR/pipeline/common/job_common.sh"
 
 dataset_gen_run_segmentation_submit() {
   dataset_gen_prepare_project_dir

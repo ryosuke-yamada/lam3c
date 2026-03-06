@@ -22,22 +22,20 @@ The following paths are maintained as part of this repository's dataset-generati
 - `.gitignore`
 - `README.md`
 - `THIRD_PARTY.md`
+- `download.py`
+- `segmentation.py`
+- `pi3.py`
 - `configs/`
 - `docs/`
-- `scripts/common/`
-- `scripts/run_stage.sh`
-- `scripts/submit_pipeline.sh`
-- `scripts/submit_stage.sh`
-- `scripts/segmentation/`
-- `scripts/pi3/`
+- `pipeline/`
 
 This includes scripts that were reconstructed from job logs or adapted from the authors' internal working tree in order to document the released dataset pipeline.
 
 ## 3. Adapted integration scripts
 
-Some files under `scripts/` were derived from pre-existing implementation code and then modified to run from `dataset_gen/` as a self-contained pipeline. They are repository-maintained integration code, not vendored upstream snapshots:
+Some implementation files under `pipeline/` were derived from pre-existing implementation code and then modified to run from `dataset_gen/` as a self-contained pipeline. They are repository-maintained integration code, not vendored upstream snapshots:
 
-- `scripts/pi3/pi3_batch_datasets.py`
+- `pipeline/pi3/pi3_batch_datasets.py`
 
 They should be reviewed carefully before assigning a final top-level license to `dataset_gen/`.
 

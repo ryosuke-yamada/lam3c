@@ -16,10 +16,10 @@ create_venv() {
 install_pi3_stack() {
   create_venv "$PI3_VENV"
   "$PI3_VENV/bin/pip" install -r "$ROOT_DIR/third_party/Pi3/requirements.txt"
-  "$PI3_VENV/bin/pip" install clip-anytorch 'scenedetect[opencv]'
+  "$PI3_VENV/bin/pip" install clip-anytorch 'scenedetect[opencv]' yt-dlp
 }
 
 install_pi3_stack
 
 echo "[INFO] Created: $PI3_VENV"
-echo "[INFO] Pi3 + segmentation stack installed into .venv_pi3"
+echo "[INFO] Pi3 + segmentation + download stack installed into .venv_pi3"

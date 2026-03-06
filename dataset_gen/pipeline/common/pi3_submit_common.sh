@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$PROJECT_DIR/scripts/common/job_common.sh"
+source "$PROJECT_DIR/pipeline/common/job_common.sh"
 
 dataset_gen_run_pi3_submit() {
   dataset_gen_resolve_array_shard "$NUM_SHARDS"

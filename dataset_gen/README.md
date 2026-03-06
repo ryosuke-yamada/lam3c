@@ -1,30 +1,38 @@
 # Dataset Generation
 
-This directory contains the complete pipeline used to reproduce the released RoomTours-derived datasets.
+This directory contains the public RoomTours reproduction pipeline.
 
 ## Scope
 
-The pipeline covered here is:
+The canonical flow is:
 
-1. raw video collection layout
-2. CLIP-based indoor-frame filtering and room-level scene segmentation
-3. Pi3 point-cloud generation from segmented scene videos
+1. read the input manifest at `../video_lists.csv`
+2. download videos with `yt-dlp`
+3. run CLIP-based indoor-frame filtering and room-level scene segmentation
+4. run Pi3 point-cloud generation on the segmented scene videos
+
+## Public entrypoints
+
+The public interface is intentionally minimal:
+
+- `download.py`: download the videos listed in `../video_lists.csv`
+- `segmentation.py`: submit the segmentation stage
+- `pi3.py`: submit the Pi3 stage
+
+Everything else under `pipeline/` is internal implementation detail.
 
 ## Layout
 
-- `configs/datasets/`: dataset-specific defaults for segmentation / Pi3
-- `configs/base/`: shared stage defaults and RoomTours helper fragments
-- `docs/roomtours_dataset_provenance.md`: dataset-by-dataset provenance matrix
-- `scripts/submit_pipeline.sh`: one-shot qsub wrapper for segmentation -> Pi3
-- `scripts/submit_stage.sh`: generic qsub entrypoint for all stages
-- `scripts/run_stage.sh`: generic runtime entrypoint executed inside the job
-- `scripts/common/`: shared config / job / stage helpers
-- `scripts/segmentation/`: raw video -> `inside_only.avi` -> `scenes/*.mp4`
-- `scripts/pi3/`: `scenes/*.mp4` -> `pi3.ply`
+- `download.py`: public download entrypoint
+- `segmentation.py`: public segmentation entrypoint
+- `pi3.py`: public Pi3 entrypoint
+- `configs/datasets/default.sh`: default runtime and cluster settings
+- `docs/roomtours_dataset_provenance.md`: canonical provenance note for the public pipeline
+- `pipeline/`: internal implementation code and runtime helpers
 - `third_party/Pi3/`: vendored Pi3 runtime code
-- `setup.sh`: creates local virtual environments for the pipeline
+- `setup.sh`: creates the local virtual environment used by download / segmentation / Pi3
 - `LICENSING.md`: boundary between repository-maintained code and vendored third-party code
-- `THIRD_PARTY.md`: pinned upstream commits and license locations
+- `THIRD_PARTY.md`: pinned upstream commit and license location
 
 ## Environment setup
 
@@ -34,30 +42,46 @@ Run from `dataset_gen/`:
 ./setup.sh
 ```
 
-This creates:
+This creates `.venv_pi3` for the full pipeline.
 
-- `.venv_pi3`: segmentation + Pi3 runtime
+## Public commands
 
-## Execution model
-
-The primary workflow is now config-driven:
+Download the canonical video list:
 
 ```bash
-./scripts/submit_pipeline.sh roomtours_batch_v8
+python download.py
 ```
 
-Or stage-by-stage if needed:
+Submit segmentation:
 
 ```bash
-./scripts/submit_stage.sh segmentation roomtours_batch_v8
-./scripts/submit_stage.sh pi3 roomtours_batch_v8
+python segmentation.py
 ```
 
-`submit_stage.sh` reads the dataset defaults from `configs/datasets/*.sh`, applies any environment-variable overrides currently set in the shell, and submits the generic runtime script `scripts/run_stage.sh`.
+Submit Pi3:
 
-The dataset configs are intentionally thin. Shared PBS defaults live under `configs/base/`, and the RoomTours-family datasets derive their stage names, log prefixes, and layout defaults from `configs/base/roomtours_release_common.sh`.
+```bash
+python pi3.py
+```
 
-The wrappers still contain cluster-specific PBS resource directives. Adjust queue / project settings for your environment before release if needed.
+Run them in order for the full reproduction flow.
+
+All commands default to `configs/datasets/default.sh`, so an explicit dataset name is not required. If needed, you can still pass another config name or config path as the optional first argument.
+
+Temporary overrides can be passed without editing the config file:
+
+```bash
+python segmentation.py --set SEG_PBS_PROJECT=gag51402
+python pi3.py --set PI3_NUM_SHARDS=8 --set PI3_PBS_PROJECT=gag51402
+```
+
+The default working directories are:
+
+- downloads: `data/roomtours/videos`
+- segmentation outputs: `data/roomtours/segmentation`
+- Pi3 outputs: `data/roomtours/pi3`
+
+The PBS defaults are still cluster-specific. Adjust queue / project settings in `configs/datasets/default.sh` or via `--set` before release to other environments.
 
 ## Licensing note
 

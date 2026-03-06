@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_DIR=$(cd "$SCRIPT_ROOT/.." && pwd)
 
-source "$PROJECT_DIR/scripts/common/config_common.sh"
+source "$PROJECT_DIR/pipeline/common/config_common.sh"
 
 STAGE=${1:-}
 DATASET_CONFIG=${2:-}
@@ -51,10 +51,10 @@ if [ -n "${QSUB_AFTEROK:-}" ]; then
   QSUB_ARGS+=(-W "depend=afterok:$QSUB_AFTEROK")
 fi
 
-echo "[INFO] qsub ${QSUB_ARGS[*]} -v STAGE=$STAGE,DATASET_CONFIG=$DATASET_CONFIG_PATH $PROJECT_DIR/scripts/run_stage.sh"
+echo "[INFO] qsub ${QSUB_ARGS[*]} -v STAGE=$STAGE,DATASET_CONFIG=$DATASET_CONFIG_PATH $PROJECT_DIR/pipeline/run_stage.sh"
 
 QSUB_RESULT=$(qsub "${QSUB_ARGS[@]}" \
   -v "STAGE=$STAGE,DATASET_CONFIG=$DATASET_CONFIG_PATH" \
-  "$PROJECT_DIR/scripts/run_stage.sh")
+  "$PROJECT_DIR/pipeline/run_stage.sh")
 
 printf '%s\n' "$QSUB_RESULT"
