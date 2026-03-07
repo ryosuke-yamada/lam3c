@@ -1,0 +1,11 @@
+LAM3C NOTICE
+
+This repository includes code adapted from Sonata:
+- Repository: https://github.com/facebookresearch/sonata
+- Original license: Apache License 2.0
+- Copyright: Meta Platforms, Inc. and affiliates
+
+Modifications for LAM3C in this repository are:
+- Copyright (c) 2026 Ryousuke Yamada
+
+The original license terms are preserved in file headers and in LICENSE.

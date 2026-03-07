@@ -2,7 +2,7 @@
 
 [![arXiv](https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg)](https://arxiv.org/abs/2512.23042)
 [![CVPR 2026](https://img.shields.io/badge/CVPR-2026-blue.svg)](https://arxiv.org/abs/2512.23042)
-[![License](https://img.shields.io/badge/license-TBD-lightgrey.svg)](#license)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](#license)
 
 Official repository for **LAM3C (Laplacian-Aware Multi-level 3D Clustering with Sinkhorn-Knopp)**  
 and **RoomTours**, a pipeline for generating large-scale point clouds from unlabeled videos.
@@ -156,11 +156,11 @@ transform = lam3c.transform.default()
 # from HuggingFace
 # supported models: "lam3c"
 # ckpt is cached in ~/.cache/lam3c/ckpt, path can be customized by `download_root`
-model = lam3c.model.load("lam3c", repo_id="ryosuke-yamada/lam3c").cuda()
+model = lam3c.model.load("lam3c", repo_id="aist-cvrt/lam3c").cuda()
 
 # or
 from lam3c.model import PointTransformerV3
-model = PointTransformerV3.from_pretrained("ryosuke-yamada/lam3c").cuda()
+model = PointTransformerV3.from_pretrained("aist-cvrt/lam3c").cuda()
 
 # from local path
 model = lam3c.model.load("ckpt/lam3c.pth").cuda()
@@ -173,11 +173,11 @@ custom_config = dict(
     enc_patch_size=[1024 for _ in range(5)],
     enable_flash=False,  # reduce patch size if necessary
 )
-model = lam3c.model.load("lam3c", repo_id="ryosuke-yamada/lam3c", custom_config=custom_config).cuda()
+model = lam3c.model.load("lam3c", repo_id="aist-cvrt/lam3c", custom_config=custom_config).cuda()
 
 # or
 from lam3c.model import PointTransformerV3
-model = PointTransformerV3.from_pretrained("ryosuke-yamada/lam3c", **custom_config).cuda()
+model = PointTransformerV3.from_pretrained("aist-cvrt/lam3c", **custom_config).cuda()
 ```
 
 **Inference.** Run inference by:
@@ -216,8 +216,8 @@ feat = point.feat[point.inverse]
 
 Pre-trained model weights and download links will be listed here.
 
-- `LAM3C-Base` - PTv3 backbone ([HuggingFace](https://huggingface.co/ryosuke-yamada/lam3c))
-- `LAM3C-Large` - larger PTv3 backbone ([HuggingFace](https://huggingface.co/ryosuke-yamada/lam3c))
+- `LAM3C-Base` - PTv3 backbone ([HuggingFace](https://huggingface.co/aist-cvrt/lam3c))
+- `LAM3C-Large` - larger PTv3 backbone ([HuggingFace](https://huggingface.co/aist-cvrt/lam3c))
 
 ---
 
@@ -244,4 +244,9 @@ We thank the ABCI team at AIST for providing computational resources.
 
 ## License
 
-License information will be added before the first public release.
+- **Code:** Apache-2.0.
+- **Upstream attribution:** This repository includes/adapts code from Sonata (Apache-2.0).
+- **Model weights:** Separate terms may apply (TBD).
+- **Dataset / generated data:** Separate terms may apply (TBD).
+
+See `LICENSE`, `NOTICE`, and `THIRD_PARTY_NOTICES.md` for details.
