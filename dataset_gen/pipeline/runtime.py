@@ -18,6 +18,7 @@ DOWNLOAD_ARCHIVE = WORK_ROOT / "download_archive.txt"
 DOWNLOAD_FAILURE_LOG = WORK_ROOT / "download_failures.tsv"
 SEGMENTATION_ROOT = WORK_ROOT / "segmentation"
 PI3_ROOT = WORK_ROOT / "pi3"
+PREPROCESS_ROOT = WORK_ROOT / "preprocess"
 BASH_BIN = shutil.which("bash") or "/bin/bash"
 
 

@@ -17,3 +17,6 @@ dependencies:
       - clip-anytorch
       - scenedetect[opencv]
       - yt-dlp
+      - open3d
+      - scipy
+      - scikit-learn

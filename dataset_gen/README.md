@@ -4,11 +4,12 @@ Tools for reproducing the RoomTours processing pipeline from a CSV list of video
 
 ## Overview
 
-This directory covers three steps:
+This directory covers four steps:
 
 1. download source videos listed in `../video_lists.csv`
 2. split each video into indoor room-tour scenes with CLIP-based filtering
 3. reconstruct per-scene point clouds with Pi3
+4. run point-cloud preprocessing on Pi3 outputs
 
 The public release is scheduler-agnostic. It does not assume ABCI, `qsub`, or any other cluster-specific environment.
 
@@ -60,6 +61,7 @@ cd dataset_gen
 python download.py
 python segmentation.py
 python pi3.py
+python preprocess.py
 ```
 
 ## Commands
@@ -111,23 +113,46 @@ python pi3.py --num-gpus 4 --num-shards 4 --shard-id 0
 python pi3.py --scene-path ./data/roomtours/segmentation/-09htWFYXaA/scenes/scene_000.mp4 --num-gpus 1
 ```
 
+### 4. Run point-cloud preprocessing
+
+```bash
+python preprocess.py
+```
+
+By default, this writes only the final output and report for each input point cloud:
+
+- `final_result.ply`
+- `report.json`
+
+Optional arguments:
+
+```bash
+python preprocess.py --input-root ./data/roomtours/pi3 --output-root ./data/roomtours/preprocess
+python preprocess.py --ply-path ./data/roomtours/pi3/-09htWFYXaA/scene-004_bedroom/pi3.ply
+python preprocess.py --max-entries 1 --verbose
+python preprocess.py --ply-path ./data/roomtours/pi3/-09htWFYXaA/scene-004_bedroom/pi3.ply --save-intermediates
+```
+
 ## Default Paths
 
 - video manifest: `../video_lists.csv`
 - downloads: `data/roomtours/videos`
 - segmentation outputs: `data/roomtours/segmentation`
 - Pi3 outputs: `data/roomtours/pi3`
+- preprocessing outputs: `data/roomtours/preprocess`
 
 ## Repository Layout
 
 - `download.py`: public download entrypoint
 - `segmentation.py`: public segmentation entrypoint
 - `pi3.py`: public Pi3 entrypoint
+- `preprocess.py`: public point-cloud preprocessing entrypoint
 - `requirements.txt`: pip/venv/uv dependency definition
 - `environment.yml`: conda environment definition
 - `pipeline/download_video_list.py`: manifest-driven downloader
 - `pipeline/segmentation/`: segmentation implementation
 - `pipeline/pi3/`: Pi3 batch implementation
+- `pipeline/preprocess/`: point-cloud preprocessing implementation
 - `third_party/Pi3/`: vendored Pi3 code
 
 ## Notes

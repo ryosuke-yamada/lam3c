@@ -24,6 +24,7 @@ The following paths are maintained as part of this repository's public dataset-g
 - `download.py`
 - `segmentation.py`
 - `pi3.py`
+- `preprocess.py`
 - `docs/`
 - `pipeline/`
 
