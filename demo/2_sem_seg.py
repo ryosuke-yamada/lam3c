@@ -135,36 +135,45 @@ if __name__ == "__main__":
     lam3c.utils.set_seed(24525867)
     # Load model (prefer local checkpoint before HuggingFace)
     repo_id = os.getenv("LAM3C_HF_REPO_ID", "aist-cvrt/lam3c")
-    local_ckpt = os.getenv("LAM3C_LOCAL_CKPT", "ckpt/lam3c.pth")
-    if os.path.isfile(local_ckpt):
-        if flash_attn is not None:
-            model = lam3c.load(local_ckpt).cuda()
-        else:
-            custom_config = dict(
-                enc_patch_size=[1024 for _ in range(5)],  # reduce patch size if necessary
-                enable_flash=False,
-            )
-            model = lam3c.load(local_ckpt, custom_config=custom_config).cuda()
-    elif flash_attn is not None:
-        model = lam3c.load("lam3c", repo_id=repo_id).cuda()
-    else:
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    default_ckpt = os.path.join(
+        project_root, "weights", "lam3c_roomtours49k_ptv3-large.infer.pth"
+    )
+    local_ckpt = os.getenv("LAM3C_LOCAL_CKPT", default_ckpt)
+    custom_config = None
+    if flash_attn is None:
         custom_config = dict(
             enc_patch_size=[1024 for _ in range(5)],  # reduce patch size if necessary
             enable_flash=False,
         )
-        model = lam3c.load(
-            "lam3c", repo_id=repo_id, custom_config=custom_config
-        ).cuda()
+
+    try:
+        model = lam3c.load("lam3c", repo_id=repo_id, custom_config=custom_config).cuda()
+        print(f"[LAM3C] Loaded checkpoint from HuggingFace repo: {repo_id}")
+    except Exception as e:
+        if not os.path.isfile(local_ckpt):
+            raise RuntimeError(
+                f"Failed to load from HuggingFace ({repo_id}) and local checkpoint "
+                f"not found at {local_ckpt}"
+            ) from e
+        print(f"[LAM3C] Falling back to local checkpoint: {local_ckpt}")
+        model = lam3c.load(local_ckpt, custom_config=custom_config).cuda()
     # Load linear probing seg head
-    local_head_ckpt = os.getenv(
-        "LAM3C_LOCAL_LINEAR_HEAD_CKPT", "ckpt/lam3c_linear_prob_head_sc.pth"
-    )
-    if os.path.isfile(local_head_ckpt):
-        ckpt = lam3c.load(local_head_ckpt, ckpt_only=True)
-    else:
+    default_head_ckpt = os.path.join(project_root, "weights", "lam3c_linear_prob_head_sc.pth")
+    local_head_ckpt = os.getenv("LAM3C_LOCAL_LINEAR_HEAD_CKPT", default_head_ckpt)
+    try:
         ckpt = lam3c.load(
             "lam3c_linear_prob_head_sc", repo_id=repo_id, ckpt_only=True
         )
+        print(f"[LAM3C] Loaded linear head from HuggingFace repo: {repo_id}")
+    except Exception as e:
+        if not os.path.isfile(local_head_ckpt):
+            raise RuntimeError(
+                f"Failed to load linear head from HuggingFace ({repo_id}) and local "
+                f"head checkpoint not found at {local_head_ckpt}"
+            ) from e
+        print(f"[LAM3C] Falling back to local linear head: {local_head_ckpt}")
+        ckpt = lam3c.load(local_head_ckpt, ckpt_only=True)
     seg_head = SegHead(**ckpt["config"]).cuda()
     seg_head.load_state_dict(ckpt["state_dict"])
     # Load default data transform pipeline
@@ -186,13 +195,36 @@ if __name__ == "__main__":
                 point[key] = point[key].cuda(non_blocking=True)
         # model forward:
         point = model(point)
+        raw_feat = point.feat
+        raw_dim = int(raw_feat.shape[-1])
+        top_native_feat = None
         while "pooling_parent" in point.keys():
             assert "pooling_inverse" in point.keys()
             parent = point.pop("pooling_parent")
             inverse = point.pop("pooling_inverse")
-            parent.feat = torch.cat([parent.feat, point.feat[inverse]], dim=-1)
+            parent_native_feat = parent.feat
+            if "pooling_parent" not in parent.keys():
+                top_native_feat = parent_native_feat
+            parent.feat = torch.cat([parent_native_feat, point.feat[inverse]], dim=-1)
             point = parent
-        feat = point.feat
+        upcast_feat = point.feat
+        upcast_dim = int(upcast_feat.shape[-1])
+        head_in_dim = int(seg_head.seg_head.in_features)
+        candidates = {
+            upcast_dim: upcast_feat,
+            raw_dim: raw_feat,
+        }
+        if top_native_feat is not None:
+            candidates[int(top_native_feat.shape[-1])] = top_native_feat
+        if head_in_dim in candidates:
+            feat = candidates[head_in_dim]
+        else:
+            available_dims = sorted(candidates.keys())
+            raise RuntimeError(
+                "Linear head input mismatch: "
+                f"head expects {head_in_dim}, but available feature dims are "
+                f"{available_dims}."
+            )
         seg_logits = seg_head(feat)
         pred = seg_logits.argmax(dim=-1).data.cpu().numpy()
         color = np.array(CLASS_COLOR_20)[pred]
@@ -201,5 +233,10 @@ if __name__ == "__main__":
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(point.coord.cpu().detach().numpy())
     pcd.colors = o3d.utility.Vector3dVector(color / 255)
-    o3d.visualization.draw_geometries([pcd])
-    # o3d.io.write_point_cloud("sem_seg.ply", pcd)
+    if os.getenv("LAM3C_HEADLESS", "0") == "1":
+        os.makedirs(os.path.join(project_root, "outputs"), exist_ok=True)
+        out_path = os.path.join(project_root, "outputs", "demo2_sem_seg.ply")
+        o3d.io.write_point_cloud(out_path, pcd)
+        print(f"[LAM3C] Headless mode: wrote {out_path}")
+    else:
+        o3d.visualization.draw_geometries([pcd])

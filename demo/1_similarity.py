@@ -76,26 +76,29 @@ if __name__ == "__main__":
     lam3c.utils.set_seed(6463323)
     # Load model (prefer local checkpoint before HuggingFace)
     repo_id = os.getenv("LAM3C_HF_REPO_ID", "aist-cvrt/lam3c")
-    local_ckpt = os.getenv("LAM3C_LOCAL_CKPT", "ckpt/lam3c.pth")
-    if os.path.isfile(local_ckpt):
-        if flash_attn is not None:
-            model = lam3c.load(local_ckpt).cuda()
-        else:
-            custom_config = dict(
-                enc_patch_size=[1024 for _ in range(5)],  # reduce patch size if necessary
-                enable_flash=False,
-            )
-            model = lam3c.load(local_ckpt, custom_config=custom_config).cuda()
-    elif flash_attn is not None:
-        model = lam3c.load("lam3c", repo_id=repo_id).cuda()
-    else:
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    default_ckpt = os.path.join(
+        project_root, "weights", "lam3c_roomtours49k_ptv3-large.infer.pth"
+    )
+    local_ckpt = os.getenv("LAM3C_LOCAL_CKPT", default_ckpt)
+    custom_config = None
+    if flash_attn is None:
         custom_config = dict(
             enc_patch_size=[1024 for _ in range(5)],  # reduce patch size if necessary
             enable_flash=False,
         )
-        model = lam3c.load(
-            "lam3c", repo_id=repo_id, custom_config=custom_config
-        ).cuda()
+
+    try:
+        model = lam3c.load("lam3c", repo_id=repo_id, custom_config=custom_config).cuda()
+        print(f"[LAM3C] Loaded checkpoint from HuggingFace repo: {repo_id}")
+    except Exception as e:
+        if not os.path.isfile(local_ckpt):
+            raise RuntimeError(
+                f"Failed to load from HuggingFace ({repo_id}) and local checkpoint "
+                f"not found at {local_ckpt}"
+            ) from e
+        print(f"[LAM3C] Falling back to local checkpoint: {local_ckpt}")
+        model = lam3c.load(local_ckpt, custom_config=custom_config).cuda()
     # Load default data transform pipeline
     transform = lam3c.transform.default()
     # Load data
@@ -211,7 +214,16 @@ if __name__ == "__main__":
                 verbose=False,
             )
         )
-        o3d.visualization.draw_geometries(pcds)
-        # o3d.io.write_point_cloud("similarity_global.ply", pcds[0])
-        # o3d.io.write_point_cloud("similarity_local.ply", pcds[1])
-        # o3d.io.write_line_set("similarity_line.ply", pcds[2])
+        if os.getenv("LAM3C_HEADLESS", "0") == "1":
+            os.makedirs(os.path.join(project_root, "outputs"), exist_ok=True)
+            out_global = os.path.join(project_root, "outputs", "demo1_similarity_global.ply")
+            out_local = os.path.join(project_root, "outputs", "demo1_similarity_local.ply")
+            out_line = os.path.join(project_root, "outputs", "demo1_similarity_line.ply")
+            o3d.io.write_point_cloud(out_global, pcds[0])
+            o3d.io.write_point_cloud(out_local, pcds[1])
+            o3d.io.write_line_set(out_line, pcds[2])
+            print(f"[LAM3C] Headless mode: wrote {out_global}")
+            print(f"[LAM3C] Headless mode: wrote {out_local}")
+            print(f"[LAM3C] Headless mode: wrote {out_line}")
+        else:
+            o3d.visualization.draw_geometries(pcds)

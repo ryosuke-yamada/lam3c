@@ -59,7 +59,22 @@ Main components:
 
 ## Installation
 
-Coming soon...
+We recommend using `conda` with `environment.yml`:
+
+```bash
+# 1) create env from pinned dependencies (PyTorch 2.5.0 + CUDA 12.4)
+cd /path/to/lam3c
+conda env create -f environment.yml
+conda activate lam3c
+
+# 2) install LAM3C package
+pip install -e .
+```
+
+Optional dependencies:
+
+- `flash-attn` can improve speed, but is optional.
+- If `flash-attn` is unavailable, demos and inference still work with `enable_flash=False` fallback.
 
 ---
 
@@ -71,11 +86,11 @@ Let's first begin with simple visualization demos with LAM3C, our pre-trained Po
 
 ### Requirements
 
-- Python >= 3.9
-- PyTorch >= 2.0
-- CUDA >= 11.8
-
-Additional dependencies are installed automatically via pip.
+- Conda
+- Python 3.10
+- PyTorch 2.5.0
+- CUDA 12.4
+- NVIDIA GPU for CUDA execution
 
 
 ### Visualization
@@ -83,7 +98,14 @@ Additional dependencies are installed automatically via pip.
 We provide similarity heatmap and PCA visualization demos in the `demo` folder.
 
 ```bash
+# optional: local checkpoints (useful on offline/HF-restricted environments)
+export LAM3C_LOCAL_CKPT="$(pwd)/weights/lam3c_roomtours49k_ptv3-large.infer.pth"
+export LAM3C_LOCAL_LINEAR_HEAD_CKPT="$(pwd)/weights/lam3c_linear_prob_head_sc.pth"
+
+# headless mode (recommended on servers such as ABCI)
+export LAM3C_HEADLESS=1
 export PYTHONPATH=./
+
 python demo/0_pca.py
 python demo/1_similarity.py
 python demo/2_sem_seg.py  # linear probed head on ScanNet

@@ -24,6 +24,7 @@ Please cite our work if the code is helpful to you.
 
 
 import os
+import pickle
 from packaging import version
 from huggingface_hub import hf_hub_download, PyTorchModelHubMixin
 from addict import Dict
@@ -764,6 +765,81 @@ def load(
     custom_config: dict = None,
     ckpt_only: bool = False,
 ):
+    def _compat_from_training_checkpoint(raw_ckpt):
+        """
+        Convert a training-time checkpoint to inference checkpoint format.
+        Expected key patterns (Pointcept/Sonata-style):
+        - module.student.backbone.*  (self-supervised pretrain)
+        - module.backbone.*          (downstream fine-tuning)
+        """
+        if "state_dict" not in raw_ckpt:
+            return None
+
+        raw_state = raw_ckpt["state_dict"]
+        prefix = None
+        ckpt_kind = None
+        if any(k.startswith("module.student.backbone.") for k in raw_state.keys()):
+            prefix = "module.student.backbone."
+            ckpt_kind = "ssl_pretrain"
+        elif any(k.startswith("module.backbone.") for k in raw_state.keys()):
+            prefix = "module.backbone."
+            ckpt_kind = "downstream_finetune"
+        if prefix is None:
+            return None
+
+        state_dict = {
+            k[len(prefix) :]: v for k, v in raw_state.items() if k.startswith(prefix)
+        }
+        if "embedding.stem.linear.weight" not in state_dict:
+            return None
+
+        stem_weight = state_dict["embedding.stem.linear.weight"]
+        stem_out, in_channels = stem_weight.shape[0], stem_weight.shape[1]
+
+        is_large = stem_out == 64
+        common_config = dict(
+            in_channels=in_channels,
+            order=("z", "z-trans", "hilbert", "hilbert-trans"),
+            stride=(2, 2, 2, 2),
+            enc_depths=(3, 3, 3, 12, 3),
+            enc_channels=(64, 128, 256, 512, 768)
+            if is_large
+            else (48, 96, 192, 384, 512),
+            enc_num_head=(4, 8, 16, 32, 48) if is_large else (3, 6, 12, 24, 32),
+            enc_patch_size=(1024, 1024, 1024, 1024, 1024),
+            mlp_ratio=4,
+            qkv_bias=True,
+            drop_path=0.3,
+            shuffle_orders=True,
+            enable_rpe=False,
+            enable_flash=True,
+            upcast_attention=False,
+            upcast_softmax=False,
+            mask_token=True,
+            freeze_encoder=False,
+        )
+        if ckpt_kind == "ssl_pretrain":
+            compat_config = dict(common_config, enc_mode=True)
+        else:
+            # Decoder config inferred from module.backbone.dec.* keys:
+            # dec_channels (64, 96, 192, 384), two blocks per stage.
+            compat_config = dict(
+                common_config,
+                mask_token=False,
+                enc_mode=False,
+                dec_depths=(2, 2, 2, 2),
+                dec_channels=(64, 96, 192, 384),
+                dec_num_head=(4, 6, 12, 24),
+                dec_patch_size=(1024, 1024, 1024, 1024),
+            )
+
+        print(
+            "[LAM3C] Converted training checkpoint to inference format using "
+            f"{'PTv3-Large' if is_large else 'PTv3-Base'} compatibility config "
+            f"(source={ckpt_kind})."
+        )
+        return {"config": compat_config, "state_dict": state_dict}
+
     if name in MODELS:
         print(f"Loading checkpoint from HuggingFace: {name} ...")
         ckpt_path = hf_hub_download(
@@ -780,9 +856,30 @@ def load(
         raise RuntimeError(f"Model {name} not found; available models = {MODELS}")
 
     if version.parse(torch.__version__) >= version.parse("2.4"):
-        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        try:
+            ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        except pickle.UnpicklingError:
+            # Backward compatibility for checkpoints serialized with objects
+            # not allowlisted by torch>=2.4 weights-only loader.
+            print(
+                "[LAM3C] Falling back to torch.load(..., weights_only=False). "
+                "Use only trusted checkpoints."
+            )
+            ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     else:
         ckpt = torch.load(ckpt_path, map_location="cpu")
+
+    if "config" not in ckpt:
+        compat_ckpt = _compat_from_training_checkpoint(ckpt)
+        if compat_ckpt is not None:
+            ckpt = compat_ckpt
+        else:
+            raise RuntimeError(
+                "Checkpoint format is not supported. Expected inference checkpoint "
+                "with keys {'config', 'state_dict'} or a training checkpoint that "
+                "contains 'module.student.backbone.*' or 'module.backbone.*' under "
+                "'state_dict'."
+            )
     if custom_config is not None:
         for key, value in custom_config.items():
             ckpt["config"][key] = value
