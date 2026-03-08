@@ -1,7 +1,7 @@
 """
 General utils
 
-Authors: Xiaoyang Wu (original), Ryousuke Yamada (modifications)
+Author: Xiaoyang Wu (xiaoyang.wu.cs@gmail.com)
 Please cite our work if the code is helpful to you.
 """
 

@@ -2,7 +2,7 @@
 Hilbert Order
 Modified from https://github.com/PrincetonLIPS/numpy-hilbert-curve
 
-Authors: Xiaoyang Wu, Kaixin Xu (original), Ryousuke Yamada (modifications)
+Author: Xiaoyang Wu (xiaoyang.wu.cs@gmail.com), Kaixin Xu
 Please cite our work if the code is helpful to you.
 """
 
