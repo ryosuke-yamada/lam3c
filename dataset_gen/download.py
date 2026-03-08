@@ -1,75 +1,80 @@
 #!/usr/bin/env python3
-"""Public entrypoint for downloading the canonical RoomTours video list."""
+"""Download the canonical RoomTours video list."""
 
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 import subprocess
-from typing import Dict, List
 
-ROOT_DIR = Path(__file__).resolve().parent
-DEFAULT_CONFIG = "default"
-INTERNAL_COMMAND = ROOT_DIR / "pipeline" / "download_videos.sh"
-
-
-def parse_env_overrides(items: List[str]) -> Dict[str, str]:
-    overrides: Dict[str, str] = {}
-    for item in items:
-        if "=" not in item:
-            raise ValueError(f"Invalid override '{item}'. Expected NAME=VALUE.")
-        key, value = item.split("=", 1)
-        key = key.strip()
-        if not key:
-            raise ValueError(f"Invalid override '{item}'. NAME cannot be empty.")
-        overrides[key] = value
-    return overrides
+from pipeline.runtime import (
+    DOWNLOAD_ARCHIVE,
+    DOWNLOAD_FAILURE_LOG,
+    DOWNLOAD_ROOT,
+    ROOT_DIR,
+    VIDEO_LIST_CSV,
+    build_runtime_env,
+    get_python_executable,
+    print_command,
+)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Download videos from video_lists.csv")
+    parser = argparse.ArgumentParser(description="Download videos listed in video_lists.csv")
+    parser.add_argument("--csv", type=Path, default=VIDEO_LIST_CSV, help="Path to the input CSV manifest")
     parser.add_argument(
-        "dataset_config",
-        nargs="?",
-        default=DEFAULT_CONFIG,
-        help="Dataset config name under configs/datasets/ or an explicit config path",
+        "--output-root", type=Path, default=DOWNLOAD_ROOT, help="Directory where downloaded videos are stored"
     )
     parser.add_argument(
-        "--set",
-        dest="overrides",
+        "--archive", type=Path, default=DOWNLOAD_ARCHIVE, help="yt-dlp download archive path"
+    )
+    parser.add_argument(
+        "--failure-log",
+        type=Path,
+        default=DOWNLOAD_FAILURE_LOG,
+        help="Path to write failed downloads as TSV",
+    )
+    parser.add_argument("--yt-dlp-bin", default="yt-dlp", help="yt-dlp executable name or path")
+    parser.add_argument(
+        "--max-videos",
+        type=int,
+        default=0,
+        help="Maximum number of manifest entries to process (0 = all entries)",
+    )
+    parser.add_argument(
+        "--video-id",
         action="append",
         default=[],
-        metavar="NAME=VALUE",
-        help="Temporary environment-variable override passed to the pipeline",
+        help="Restrict downloads to specific video_id values. Can be passed multiple times; use --video-id=<id> when the id starts with '-'.",
     )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print the resolved command without executing it",
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Print the resolved command without executing it")
     args = parser.parse_args()
 
-    try:
-        overrides = parse_env_overrides(args.overrides)
-    except ValueError as exc:
-        parser.error(str(exc))
-
-    if not INTERNAL_COMMAND.exists():
-        parser.error(f"Missing internal command: {INTERNAL_COMMAND}")
-
-    cmd = [str(INTERNAL_COMMAND), args.dataset_config]
-    print("[INFO] command:", " ".join(cmd), flush=True)
-    if overrides:
-        for key, value in sorted(overrides.items()):
-            print(f"[INFO] env override: {key}={value}", flush=True)
+    python_bin = get_python_executable()
+    command = [
+        str(python_bin),
+        str(ROOT_DIR / "pipeline" / "download_video_list.py"),
+        "--csv",
+        str(args.csv),
+        "--output-root",
+        str(args.output_root),
+        "--archive",
+        str(args.archive),
+        "--failure-log",
+        str(args.failure_log),
+        "--yt-dlp-bin",
+        args.yt_dlp_bin,
+    ]
+    if args.max_videos:
+        command.extend(["--max-videos", str(args.max_videos)])
+    for video_id in args.video_id:
+        command.append(f"--video-id={video_id}")
+    print_command(command)
 
     if args.dry_run:
         return 0
 
-    env = os.environ.copy()
-    env.update(overrides)
-    completed = subprocess.run(cmd, cwd=ROOT_DIR, env=env)
+    completed = subprocess.run(command, cwd=ROOT_DIR, env=build_runtime_env())
     return int(completed.returncode)
 
 

@@ -1,88 +1,143 @@
-# Dataset Generation
+# RoomTours Dataset Generation
 
-This directory contains the public RoomTours reproduction pipeline.
+Tools for reproducing the RoomTours processing pipeline from a CSV list of video URLs.
 
-## Scope
+## Overview
 
-The canonical flow is:
+This directory covers three steps:
 
-1. read the input manifest at `../video_lists.csv`
-2. download videos with `yt-dlp`
-3. run CLIP-based indoor-frame filtering and room-level scene segmentation
-4. run Pi3 point-cloud generation on the segmented scene videos
+1. download source videos listed in `../video_lists.csv`
+2. split each video into indoor room-tour scenes with CLIP-based filtering
+3. reconstruct per-scene point clouds with Pi3
 
-## Public entrypoints
+The public release is scheduler-agnostic. It does not assume ABCI, `qsub`, or any other cluster-specific environment.
 
-The public interface is intentionally minimal:
+## Requirements
 
-- `download.py`: download the videos listed in `../video_lists.csv`
-- `segmentation.py`: submit the segmentation stage
-- `pi3.py`: submit the Pi3 stage
+- Python 3.9+
+- CUDA GPU(s) for practical Pi3 execution
+- enough disk space for downloaded videos and intermediate outputs
 
-Everything else under `pipeline/` is internal implementation detail.
+`ffmpeg` is not required by the current segmentation path.
 
-## Layout
+## Environment Setup
 
-- `download.py`: public download entrypoint
-- `segmentation.py`: public segmentation entrypoint
-- `pi3.py`: public Pi3 entrypoint
-- `configs/datasets/default.sh`: default runtime and cluster settings
-- `docs/roomtours_dataset_provenance.md`: canonical provenance note for the public pipeline
-- `pipeline/`: internal implementation code and runtime helpers
-- `third_party/Pi3/`: vendored Pi3 runtime code
-- `setup.sh`: creates the local virtual environment used by download / segmentation / Pi3
-- `LICENSING.md`: boundary between repository-maintained code and vendored third-party code
-- `THIRD_PARTY.md`: pinned upstream commit and license location
+Choose one of the following.
 
-## Environment setup
-
-Run from `dataset_gen/`:
+### Option 1: `venv`
 
 ```bash
-./setup.sh
+cd dataset_gen
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-This creates `.venv_pi3` for the full pipeline.
+### Option 2: `uv`
 
-## Public commands
+```bash
+cd dataset_gen
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
 
-Download the canonical video list:
+### Option 3: `conda`
+
+```bash
+cd dataset_gen
+conda env create -f environment.yml
+conda activate lam3c-dataset-gen
+```
+
+## Quick Start
+
+After activating one of the environments above:
+
+```bash
+cd dataset_gen
+python download.py
+python segmentation.py
+python pi3.py
+```
+
+## Commands
+
+### 1. Download videos
 
 ```bash
 python download.py
 ```
 
-Submit segmentation:
+By default, this processes all entries in `../video_lists.csv`.
+
+Common options:
+
+```bash
+python download.py --csv ../video_lists.csv --output-root ./data/roomtours/videos
+python download.py --max-videos 1
+python download.py --video-id=-09htWFYXaA
+python download.py --video-id=-09htWFYXaA --video-id=-0DkX-2ZeYA
+python download.py --max-videos 10 --dry-run
+```
+
+### 2. Run segmentation
 
 ```bash
 python segmentation.py
 ```
 
-Submit Pi3:
+Optional arguments:
+
+```bash
+python segmentation.py --input-root ./data/roomtours/videos --output-root ./data/roomtours/segmentation
+python segmentation.py --gpu-ids 0,1,2,3 --concurrency 4
+python segmentation.py --video-path ./data/roomtours/videos/-09htWFYXaA.mp4 --concurrency 1
+python segmentation.py --video-id=-09htWFYXaA --concurrency 1
+```
+
+### 3. Run Pi3
 
 ```bash
 python pi3.py
 ```
 
-Run them in order for the full reproduction flow.
-
-All commands default to `configs/datasets/default.sh`, so an explicit dataset name is not required. If needed, you can still pass another config name or config path as the optional first argument.
-
-Temporary overrides can be passed without editing the config file:
+Optional arguments:
 
 ```bash
-python segmentation.py --set SEG_PBS_PROJECT=gag51402
-python pi3.py --set PI3_NUM_SHARDS=8 --set PI3_PBS_PROJECT=gag51402
+python pi3.py --input-root ./data/roomtours/segmentation --output-root ./data/roomtours/pi3
+python pi3.py --num-gpus 4 --num-shards 4 --shard-id 0
+python pi3.py --scene-path ./data/roomtours/segmentation/-09htWFYXaA/scenes/scene_000.mp4 --num-gpus 1
 ```
 
-The default working directories are:
+## Default Paths
 
+- video manifest: `../video_lists.csv`
 - downloads: `data/roomtours/videos`
 - segmentation outputs: `data/roomtours/segmentation`
 - Pi3 outputs: `data/roomtours/pi3`
 
-The PBS defaults are still cluster-specific. Adjust queue / project settings in `configs/datasets/default.sh` or via `--set` before release to other environments.
+## Repository Layout
 
-## Licensing note
+- `download.py`: public download entrypoint
+- `segmentation.py`: public segmentation entrypoint
+- `pi3.py`: public Pi3 entrypoint
+- `requirements.txt`: pip/venv/uv dependency definition
+- `environment.yml`: conda environment definition
+- `pipeline/download_video_list.py`: manifest-driven downloader
+- `pipeline/segmentation/`: segmentation implementation
+- `pipeline/pi3/`: Pi3 batch implementation
+- `third_party/Pi3/`: vendored Pi3 code
 
-`dataset_gen/` does not yet ship with a single top-level `LICENSE` file. Review `LICENSING.md` before assigning one, because `third_party/` remains under upstream licenses and model weights are not redistributed here.
+## Notes
+
+- The downloader skips files that already exist for the same `video_id`.
+- Failed downloads are recorded in `data/roomtours/download_failures.tsv`.
+- The segmentation step can run on CPU, but it is much slower.
+- Pi3 is expected to run on CUDA GPUs.
+- Public entrypoints use the currently active Python environment. They do not require a fixed `.venv` name.
+
+## License Notes
+
+This directory does not yet ship with a single top-level `LICENSE` file. See `LICENSING.md` and `THIRD_PARTY.md` for the boundary between repository-maintained code and vendored third-party code.

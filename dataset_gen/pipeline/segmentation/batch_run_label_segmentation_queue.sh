@@ -5,6 +5,7 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+PYTHON_BIN=${PYTHON_BIN:-python}
 
 if [ $# -lt 3 ]; then
   echo "Usage: $0 <video_root> <output_root> <concurrency>" >&2
@@ -35,14 +36,14 @@ ensure_queue() {
   flock -x 200
   if [ ! -s "$QUEUE_FILE" ]; then
     echo "[INFO] Initializing task queue at $QUEUE_FILE"
-    python "$SCRIPT_DIR/init_segmentation_queue.py" "$VIDEO_ROOT" "$OUTPUT_ROOT" "$QUEUE_FILE" >&2
+    "$PYTHON_BIN" "$SCRIPT_DIR/init_segmentation_queue.py" "$VIDEO_ROOT" "$OUTPUT_ROOT" "$QUEUE_FILE" >&2
   fi
   flock -u 200
 }
 
 pop_task() {
   local video
-  if video=$(python "$SCRIPT_DIR/pop_segmentation_queue.py" "$QUEUE_FILE" 2>/dev/null); then
+  if video=$("$PYTHON_BIN" "$SCRIPT_DIR/pop_segmentation_queue.py" "$QUEUE_FILE" 2>/dev/null); then
     if [ -z "$video" ]; then
       return 1
     fi
@@ -57,10 +58,10 @@ process_video() {
   local gpu_id="$2"
   local rel="${video#$VIDEO_ROOT/}"
   if [ "$rel" = "$video" ]; then
-    rel=$(basename "$video")
+    rel=$(basename -- "$video")
   fi
-  local rel_dir=$(dirname "$rel")
-  local filename=$(basename "$video")
+  local rel_dir=$(dirname -- "$rel")
+  local filename=$(basename -- "$video")
   local stem="${filename%.*}"
   local out_dir="$OUTPUT_ROOT"
   if [ "$rel_dir" != "." ] && [ -n "$rel_dir" ]; then

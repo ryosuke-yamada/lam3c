@@ -18,4 +18,4 @@ This directory vendors the external code required to reproduce the released data
 - `dataset_gen` vendors code, not pretrained weights.
 - No model weights are redistributed inside `dataset_gen/`.
 - Pi3 checkpoints are expected to be obtained separately at runtime by the upstream loading code or by user-managed environments.
-- `dataset_gen` scripts import these vendored copies directly, so this directory is self-contained once the virtual environments are created with `./setup.sh`.
+- `dataset_gen` scripts import these vendored copies directly, so this directory is self-contained once the Python dependencies from `requirements.txt` or `environment.yml` are installed.

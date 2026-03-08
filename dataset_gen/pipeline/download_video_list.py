@@ -26,6 +26,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--archive", default="", help="yt-dlp download archive path")
     parser.add_argument("--failure-log", default="", help="Path to write failed downloads as TSV")
     parser.add_argument("--yt-dlp-bin", default="yt-dlp", help="yt-dlp executable name or path")
+    parser.add_argument(
+        "--max-videos",
+        type=int,
+        default=0,
+        help="Maximum number of manifest entries to process (0 = all entries)",
+    )
+    parser.add_argument(
+        "--video-id",
+        action="append",
+        default=[],
+        help="Restrict downloads to specific video_id values. Can be passed multiple times; use --video-id=<id> when the id starts with '-'.",
+    )
     return parser.parse_args()
 
 
@@ -54,6 +66,22 @@ def load_entries(csv_path: Path) -> List[VideoEntry]:
     return entries
 
 
+def filter_entries(
+    entries: List[VideoEntry], selected_video_ids: List[str], max_videos: int
+) -> List[VideoEntry]:
+    filtered = entries
+    if selected_video_ids:
+        requested = {video_id.strip() for video_id in selected_video_ids if video_id.strip()}
+        filtered = [entry for entry in entries if entry.video_id in requested]
+        missing = sorted(requested.difference(entry.video_id for entry in filtered))
+        for video_id in missing:
+            print(f"[WARN] video_id not found in manifest: {video_id}", file=sys.stderr)
+
+    if max_videos > 0:
+        filtered = filtered[:max_videos]
+    return filtered
+
+
 def existing_downloads(output_root: Path, video_id: str) -> List[Path]:
     matches = []
     for path in sorted(output_root.glob(f"{video_id}.*")):
@@ -75,6 +103,8 @@ def build_command(yt_dlp_bin: str, entry: VideoEntry, output_root: Path, archive
         "--no-overwrites",
         "--no-part",
         "--newline",
+        "--extractor-args",
+        "youtube:player_client=android",
         "--output",
         str(output_root / f"{entry.video_id}.%(ext)s"),
     ]
@@ -100,6 +130,10 @@ def write_failure_log(path: Path, failures: Iterable[tuple[str, str, str]]) -> N
 
 def main() -> int:
     args = parse_args()
+    if args.max_videos < 0:
+        print("[ERROR] --max-videos must be >= 0", file=sys.stderr)
+        return 1
+
     csv_path = Path(args.csv).resolve()
     output_root = Path(args.output_root).resolve()
     archive_path = Path(args.archive).resolve() if args.archive else None
@@ -114,6 +148,11 @@ def main() -> int:
         entries = load_entries(csv_path)
     except (FileNotFoundError, ValueError) as exc:
         print(f"[ERROR] {exc}", file=sys.stderr)
+        return 1
+
+    entries = filter_entries(entries, args.video_id, args.max_videos)
+    if not entries:
+        print("[ERROR] No video entries selected for download.", file=sys.stderr)
         return 1
 
     output_root.mkdir(parents=True, exist_ok=True)

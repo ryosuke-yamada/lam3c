@@ -6,9 +6,14 @@
 
 set -euo pipefail
 
-VIDEO_ROOT=${1:-/groups/gag51402/datasets/RoomTours/raw_videos/1st_download}
-OUTPUT_ROOT=${2:-/groups/gag51402/datasets/RoomTours/processed_label_segments_v2}
+VIDEO_ROOT=${1:-}
+OUTPUT_ROOT=${2:-}
 CONCURRENCY_INPUT=${3:-}
+
+if [ -z "$VIDEO_ROOT" ] || [ -z "$OUTPUT_ROOT" ]; then
+  echo "Usage: $0 <video_root> <output_root> [concurrency]" >&2
+  exit 1
+fi
 
 # Detect available GPU IDs (via GPU_IDS env or nvidia-smi).
 GPU_IDS_STR=${GPU_IDS:-}
@@ -91,8 +96,8 @@ process_dir() {
   find "$dir" -type f \( "${PATTERN[@]}" \) -print0 |
     while IFS= read -r -d '' video; do
       local rel_path=${video#"$VIDEO_ROOT"/}
-      local rel_dir=$(dirname "$rel_path")
-      local stem=$(basename "$video")
+      local rel_dir=$(dirname -- "$rel_path")
+      local stem=$(basename -- "$video")
       stem=${stem%.*}
       [ "$rel_dir" = "." ] && rel_dir=""
       local out_dir="$OUTPUT_ROOT"
@@ -131,10 +136,8 @@ TARGET_DIRS+=("${SUBDIRS[@]}")
 NUM_SHARDS=${NUM_SHARDS:-0}
 if [ ${NUM_SHARDS:-0} -gt 0 ]; then
   if [ -z "${SHARD_ID:-}" ]; then
-    SHARD_ID=${PBS_ARRAY_INDEX:-0}
-    if [ "$SHARD_ID" -gt 0 ]; then
-      SHARD_ID=$((SHARD_ID - 1))
-    fi
+    echo "[ERROR] SHARD_ID is required when NUM_SHARDS > 0" >&2
+    exit 1
   fi
   if [ "$SHARD_ID" -lt 0 ] || [ "$SHARD_ID" -ge "$NUM_SHARDS" ]; then
     echo "[ERROR] SHARD_ID=$SHARD_ID out of range for NUM_SHARDS=$NUM_SHARDS" >&2

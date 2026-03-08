@@ -2,6 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+PYTHON_BIN=${PYTHON_BIN:-python}
 
 if [ ${#@} -lt 1 ]; then
   echo "Usage: $0 <input_video> [output_dir]" >&2
@@ -39,7 +40,7 @@ mkdir -p "$OUTDIR"
 VIDEO="$VIDEO" OUTDIR="$OUTDIR" SKIP_LOG="$SKIP_LOG_PATH" SAMPLE_STRIDE="$SAMPLE_STRIDE" BATCH_SIZE="$BATCH_SIZE" DEVICE="$DEVICE" \
 SMOOTH_SEC="$SMOOTH_SEC" MIN_INSIDE_SEC="$MIN_INSIDE_SEC" OUTSIDE_MARGIN_SEC="$OUTSIDE_MARGIN_SEC" \
 SEGMENTATION_SCRIPT_DIR="$SCRIPT_DIR" \
-python - <<'PY'
+ "$PYTHON_BIN" - <<'PY'
 import csv
 import os
 import sys
@@ -157,7 +158,7 @@ SCENES_DIR="$OUTDIR/scenes"
 mkdir -p "$SCENES_DIR"
 VIDEO_AVI="$VIDEO_AVI" SCENES_DIR="$SCENES_DIR" TARGET_SEG_FPS="$TARGET_SEG_FPS" MIN_ROOM_SEC="$MIN_ROOM_SEC" \
 SEGMENTATION_SCRIPT_DIR="$SCRIPT_DIR" \
-python - <<'PY'
+ "$PYTHON_BIN" - <<'PY'
 import os
 import sys
 
