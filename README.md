@@ -236,10 +236,13 @@ feat = point.feat[point.inverse]
 
 ## Pre-trained Models
 
-Pre-trained model weights and download links will be listed here.
+Download pre-trained checkpoints from Google Drive (recommended for now) and place them under `weights/`.
+HuggingFace links are also kept below and will be updated as files are published.
 
-- `LAM3C-Base` - PTv3 backbone ([HuggingFace](https://huggingface.co/aist-cvrt/lam3c))
-- `LAM3C-Large` - larger PTv3 backbone ([HuggingFace](https://huggingface.co/aist-cvrt/lam3c))
+- `lam3c_roomtours49k_ptv3-large.infer.pth` (inference backbone)  
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
+- `lam3c_linear_prob_head_sc.pth` (ScanNet linear head for `demo/2_sem_seg.py`)  
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
 
 ---
 
