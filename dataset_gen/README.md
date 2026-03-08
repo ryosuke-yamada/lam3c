@@ -27,10 +27,10 @@ python pipeline.py
 
 For the full release-scale run, budget at least:
 
-- about `117 GB` for `data/roomtours/videos`
-- about `96 GB` for `data/roomtours/segmentation`
+- about `117 GB` for the source videos in `data/roomtours/videos`
+- about `96 GB` for the final RoomTours point-cloud data after preprocessing
 
-Pi3 and preprocessing outputs require additional headroom.
+Segmentation and Pi3 intermediates require additional temporary headroom.
 
 ## Installation
 
@@ -69,6 +69,31 @@ By default, `pipeline.py` executes:
 3. `python pi3.py`
 4. `python preprocess.py`
 
+### `pipeline.py` arguments
+
+| Argument | Description |
+| --- | --- |
+| `--csv` | Input CSV manifest. Defaults to `../video_lists.csv`. |
+| `--download-root` | Output directory for downloaded videos. |
+| `--segmentation-root` | Output directory for segmentation results. |
+| `--pi3-root` | Output directory for Pi3 point clouds. |
+| `--preprocess-root` | Output directory for preprocessed point clouds. |
+| `--max-videos` | Limit the run to the first `N` manifest entries. `0` means all entries. |
+| `--video-id` | Restrict the run to specific video IDs. Can be passed multiple times. |
+| `--segmentation-concurrency` | Number of segmentation workers. |
+| `--gpu-ids` | Comma-separated GPU list for segmentation, for example `0,1,2,3`. |
+| `--pi3-num-gpus` | Number of GPUs used by Pi3. |
+| `--pi3-num-shards` | Number of Pi3 shards for manual parallelization. |
+| `--pi3-shard-id` | Pi3 shard index in `[0, pi3-num-shards-1]`. |
+| `--save-intermediates` | Save intermediate point clouds during preprocessing. |
+| `--verbose` | Enable verbose preprocessing logs. |
+| `--skip-download` | Skip the download stage. |
+| `--skip-segmentation` | Skip the segmentation stage. |
+| `--skip-pi3` | Skip the Pi3 stage. |
+| `--skip-preprocess` | Skip the preprocessing stage. |
+| `--overwrite-existing` | Overwrite existing outputs for stages that support it. |
+| `--dry-run` | Print resolved stage commands without executing them. |
+
 ## Stage Entry Points
 
 ### Download
@@ -79,6 +104,17 @@ python download.py --max-videos 1
 python download.py --video-id=-09htWFYXaA
 ```
 
+| Argument | Description |
+| --- | --- |
+| `--csv` | Input CSV manifest. Defaults to `../video_lists.csv`. |
+| `--output-root` | Directory where downloaded videos are written. |
+| `--archive` | `yt-dlp` archive file used to avoid re-downloading the same videos. |
+| `--failure-log` | TSV file for failed downloads. |
+| `--yt-dlp-bin` | `yt-dlp` executable name or path. |
+| `--max-videos` | Limit to the first `N` manifest entries. `0` means all entries. |
+| `--video-id` | Download only specific video IDs. Can be passed multiple times. |
+| `--dry-run` | Print the resolved command without executing it. |
+
 ### Segmentation
 
 ```bash
@@ -87,6 +123,19 @@ python segmentation.py --video-id=-09htWFYXaA --concurrency 1
 python segmentation.py --video-path ./data/roomtours/videos/-09htWFYXaA.mp4 --concurrency 1
 ```
 
+| Argument | Description |
+| --- | --- |
+| `--input-root` | Directory containing downloaded source videos. |
+| `--output-root` | Directory where segmentation outputs are written. |
+| `--runner` | Internal execution mode. `queue` is the default and the recommended mode. |
+| `--concurrency` | Number of concurrent segmentation workers. |
+| `--video-path` | Process only explicit video paths. Can be passed multiple times. |
+| `--video-id` | Process only videos matching specific `video_id` values under `--input-root`. |
+| `--gpu-ids` | Comma-separated GPU IDs used by the segmentation stage. |
+| `--num-shards` | Optional shard count for batch mode. |
+| `--shard-id` | Shard index in batch mode. |
+| `--dry-run` | Print the resolved command without executing it. |
+
 ### Pi3
 
 ```bash
@@ -94,6 +143,28 @@ python pi3.py
 python pi3.py --num-gpus 4 --num-shards 4 --shard-id 0
 python pi3.py --scene-path ./data/roomtours/segmentation/-09htWFYXaA/scenes/scene-004_bedroom.mp4 --num-gpus 1
 ```
+
+| Argument | Description |
+| --- | --- |
+| `--input-root` | Root directory containing segmentation outputs. |
+| `--output-root` | Directory where Pi3 outputs are written. |
+| `--layout` | Input layout expected by the Pi3 batch script. Use `roomtours_scenes` for the default pipeline. |
+| `--interval` | Frame or image sampling interval. |
+| `--num-gpus` | Number of GPUs used by Pi3. |
+| `--num-shards` | Number of shards for manual parallel execution. |
+| `--shard-id` | Shard index in `[0, num-shards-1]`. |
+| `--pixel-limit` | Approximate resize budget per frame before Pi3 inference. |
+| `--max-entries` | Limit the number of discovered inputs. `0` means no limit. |
+| `--scene-json` | Explicit JSON file listing scene inputs and outputs. |
+| `--scene-path` | Process only explicit segmented scene MP4 files. Can be passed multiple times. |
+| `--video-skip-seconds` | Number of initial seconds skipped for each input video scene. |
+| `--video-target-frames` | Maximum target frame count for videos after sampling. |
+| `--image-target-frames` | Maximum target frame count for image-directory inputs. |
+| `--preserve-order` | Preserve discovered input order instead of reordering internally. |
+| `--video-adjust-for-high-fps` | Increase sampling interval automatically for high-FPS videos. Enabled by default. |
+| `--include-processed` | Include inputs whose outputs already exist. |
+| `--overwrite-existing` | Overwrite existing Pi3 outputs instead of skipping them. |
+| `--dry-run` | Print the resolved command without executing it. |
 
 ### Preprocessing
 
@@ -107,6 +178,18 @@ By default, preprocessing writes:
 
 - `final_result.ply`
 - `report.json`
+
+| Argument | Description |
+| --- | --- |
+| `--input-root` | Root directory containing Pi3 outputs. |
+| `--output-root` | Directory where preprocessing outputs are written. |
+| `--config` | JSON config for preprocessing. Defaults to `pipeline/preprocess/default_config.json`. |
+| `--ply-path` | Process only explicit Pi3 `.ply` files. Can be passed multiple times. |
+| `--max-entries` | Limit the number of discovered `.ply` inputs. `0` means all entries. |
+| `--overwrite-existing` | Overwrite existing preprocessing outputs. |
+| `--save-intermediates` | Save intermediate point clouds in addition to the final output. |
+| `--verbose` | Enable verbose preprocessing logs. |
+| `--dry-run` | Print resolved preprocessing targets without executing them. |
 
 ## Input and Output Layout
 
