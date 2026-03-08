@@ -1,0 +1,7 @@
+.venv/
+.venv_pi3/
+logs/
+data/
+tmp/
+__pycache__/
+*.pyc
