@@ -1,7 +1,7 @@
 {
   "pre_downsample": {
     "enabled": true,
-    "threshold": 400000,
+    "threshold": 2000000,
     "seed": 42,
     "comment": "Pre-downsampling: auto-trigger above threshold and randomly reduce to threshold point count."
   },
