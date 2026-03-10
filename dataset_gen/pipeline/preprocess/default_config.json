@@ -1,22 +1,19 @@
 {
-  "seed": 42,
-  "save_intermediate_ply": true,
   "pre_downsample": {
-    "enabled": false,
-    "threshold": 2000000,
-    "comment": "Optional pre-downsampling: trigger automatically above the threshold and randomly reduce to the threshold point count."
+    "enabled": true,
+    "threshold": 400000,
+    "seed": 42,
+    "comment": "Pre-downsampling: auto-trigger above threshold and randomly reduce to threshold point count."
   },
   "outlier_removal": {
     "enabled": true,
-    "cell_factor": 100.0,
-    "margin_cells": 1,
     "radius_factor": 10.0,
     "r_min_pts": 1,
-    "k_sor": 32,
+    "k_sor": 50,
     "std_ratio": 4.0,
     "hard_cap": 0.01,
-    "memory_threshold": 1000000,
-    "comment": "Outlier removal: remove only obvious floating points, cap removal at 1%, and use conservative R-OR and SOR settings."
+    "n_jobs": 4,
+    "comment": "Outlier removal: only remove obvious floating points (max 1% reduction), conservative R-OR and SOR."
   },
   "z_up_alignment": {
     "enabled": true,
@@ -25,31 +22,34 @@
     "max_iterations": 500,
     "min_inliers": 50,
     "exact_axis": true,
+    "seed": 42,
     "comment": "Z-up alignment: detect multiple planes and select the best floor candidate."
   },
   "scale_adjustment": {
     "enabled": true,
-    "use_probabilistic": false,
-    "target_scale": null,
-    "comment": "Scale adjustment: map the reconstruction to the ScanNet scale distribution."
+    "use_probabilistic": true,
+    "seed": 42,
+    "comment": "Scale adjustment: map to the ScanNet scale distribution (probabilistic sampling)."
   },
   "spacing_normalization": {
     "enabled": true,
-    "spacing_error_threshold": 0.02,
-    "max_steps": 5,
-    "n_maintain_tolerance": 0.05,
-    "comment": "Spacing normalization: combine the r^3 rule, perfect spacing sampling, and iterative refinement."
+    "target_spacing": 0.01333,
+    "spacing_error_threshold": 0.03,
+    "max_refine_iters": 5,
+    "min_points_ratio": 0.0,
+    "comment": "Spacing normalization: r^3 rule + perfect spacing sampling + iterative refinement."
   },
   "density_adjustment": {
     "enabled": true,
     "min_final_points": 40000,
     "max_change_ratio": 0.3,
-    "comment": "Density adjustment: correct only extreme density outliers within a +/-30% budget."
+    "seed": null,
+    "comment": "Density adjustment: only correct extreme outliers within +/-30%."
   },
   "normal_estimation": {
     "enabled": true,
     "k": 32,
     "chunk_threshold": 1000000,
-    "comment": "Normal estimation: KNN normals with chunked handling above one million points."
+    "comment": "Normal estimation: KNN normals with chunk processing above one million points."
   }
 }

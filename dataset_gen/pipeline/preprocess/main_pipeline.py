@@ -271,8 +271,12 @@ class PreprocessPipeline:
                     self._save_intermediate(output_dir, 'step4_spacing_normalized',
                                           current_coords, current_colors, current_normals)
                 
-                max_refine_iterations = 5
-                error_threshold = 0.10
+                max_refine_iterations = int(
+                    self.config['spacing_normalization'].get('max_refine_iters', 5)
+                )
+                error_threshold = float(
+                    self.config['spacing_normalization'].get('spacing_error_threshold', 0.10)
+                )
                 
                 for refine_iter in range(1, max_refine_iterations + 1):
                     current_error = info['error']
@@ -328,7 +332,7 @@ class PreprocessPipeline:
                 )
                 self._log(
                     f"Density adjusted: {info['adjusted']}, "
-                    f"N={info['N_before']:,}->{info['N_after']:,}, "
+                    f"N={info['N_original']:,}->{info['N_final']:,}, "
                     f"density={info['density_original']:.1f}->{info['density_final']:.1f}"
                 )
                 
