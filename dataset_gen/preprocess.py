@@ -124,7 +124,7 @@ def discover_input_plys(
         deduped = [
             path
             for path in deduped
-            if not (default_output_dir(path, input_root, output_root) / "final_result.ply").exists()
+            if not (default_output_dir(path, input_root, output_root) / "coord.npy").exists()
         ]
 
     if max_entries > 0:
@@ -140,8 +140,11 @@ def default_output_dir(input_ply: Path, input_root: Path, output_root: Path) -> 
     try:
         rel_path = input_ply.relative_to(input_root)
         parent = rel_path.parent
+        if len(parent.parts) >= 2:
+            video_name, scene_name = parent.parts[-2], parent.parts[-1]
+            return output_root / f"{video_name}_{scene_name}"
         if parent.parts:
-            return output_root / parent
+            return output_root / parent.parts[-1]
         return output_root / input_ply.stem
     except ValueError:
         return output_root / input_ply.parent.name
@@ -164,11 +167,11 @@ def run_preprocess_batch(
 
     for index, input_path in enumerate(input_paths, start=1):
         output_dir = default_output_dir(input_path, input_root, output_root)
-        final_output_path = output_dir / "final_result.ply"
+        coord_output_path = output_dir / "coord.npy"
         report_path = output_dir / "report.json"
 
-        if final_output_path.exists() and not overwrite_existing:
-            print(f"[{index}/{len(input_paths)}] skip existing: {final_output_path}", flush=True)
+        if coord_output_path.exists() and not overwrite_existing:
+            print(f"[{index}/{len(input_paths)}] skip existing: {coord_output_path}", flush=True)
             continue
 
         print(f"[{index}/{len(input_paths)}] preprocess {input_path} -> {output_dir}", flush=True)
@@ -193,7 +196,7 @@ def run_preprocess_batch(
             save_intermediates=save_intermediates,
             output_dir=str(output_dir),
         )
-        pipeline._save_ply(final_output_path, coords_final, colors_final, normals_final)
+        save_final_npy(output_dir, coords_final, colors_final, normals_final)
         pipeline.save_report(report, report_path)
 
     return 0
@@ -204,6 +207,16 @@ def stack_vertex_fields(vertex, field_names: tuple[str, str, str], dtype: str):
 
     arrays = [vertex[name].astype(dtype) for name in field_names]
     return np.stack(arrays, axis=1)
+
+
+def save_final_npy(output_dir: Path, coords, colors, normals) -> None:
+    import numpy as np
+
+    np.save(output_dir / "coord.npy", coords)
+    if colors is not None:
+        np.save(output_dir / "color.npy", colors)
+    if normals is not None:
+        np.save(output_dir / "normal.npy", normals)
 
 
 if __name__ == "__main__":
