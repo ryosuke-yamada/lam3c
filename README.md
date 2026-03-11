@@ -1,9 +1,9 @@
 <p align="center">
-    <img src="assets/logo.png" width="150" style="margin-bottom: 0.2;"/>
+    <img src="assets/logo.png" width="600" style="margin-bottom: 0.2;"/>
 </p>
 
-<p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p>
-<p align="center"><strong><font size="4">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
+<!-- <p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p> -->
+<p align="center"><strong><font size="6">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
 
 ---
 
@@ -57,23 +57,38 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 
 ## Installation
 
-We recommend using `conda` with `environment.yml`:
+This repo provide two ways of installation: **standalone mode** and **package mode**.
 
-```bash
-# 1) create env from pinned dependencies (PyTorch 2.5.0 + CUDA 12.4)
-cd /path/to/lam3c
-conda env create -f environment.yml
-conda activate lam3c
+- The **standalone mode** is recommended for users who want to use the code for quick inference and visualization. We provide a most easy way to install the environment by using `conda` environment file. The whole environment including `cuda` and `pytorch` can be easily installed by running the following command:
+  ```bash
+  # Create and activate conda environment named as 'sonata'
+  # cuda: 12.4, pytorch: 2.5.0
 
-# 2) install LAM3C package
-pip install -e .
-```
+  # run `unset CUDA_PATH` if you have installed cuda in your local environment
+  conda env create -f environment.yml --verbose
+  conda activate sonata
+  ```
 
-Optional dependencies:
+  *We install **FlashAttention** by default, yet not necessary. If FlashAttention is not available in your local environment, it's okay, check Model section in [Quick Start](#quick-start) for solution.*
 
-- `flash-attn` can improve speed, but is optional.
-- If `flash-attn` is unavailable, demos and inference still work with `enable_flash=False` fallback.
+- The **package mode** is recommended for users who want to inject our model into their own codebase. We provide a `setup.py` file for installation. You can install the package by running the following command:
+  ```bash
+  # Ensure Cuda and Pytorch are already installed in your local environment
 
+  # CUDA_VERSION: cuda version of local environment (e.g., 124), check by running 'nvcc --version'
+  # TORCH_VERSION: torch version of local environment (e.g., 2.5.0), check by running 'python -c "import torch; print(torch.__version__)"'
+  pip install spconv-cu${CUDA_VERSION}
+  pip install torch-scatter -f https://data.pyg.org/whl/torch-{TORCH_VERSION}+cu${CUDA_VERSION}.html
+  pip install git+https://github.com/Dao-AILab/flash-attention.git
+  pip install huggingface_hub timm
+
+  # (optional, or directly copy the sonata folder to your project)
+  python setup.py install
+  ```
+  Additionally, for running our **demo code**, the following packages are also required:
+  ```bash
+  pip install open3d fast_pytorch_kmeans psutil numpy==1.26.4  # currently, open3d does not support numpy 2.x
+  ```
 ---
 
 ## Quick Start
