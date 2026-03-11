@@ -3,15 +3,15 @@
 </p>
 
 <!-- <p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p> -->
-<p align="center"><strong><font size="14">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
+<h1 align="center">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</h1>
 
 
 <p align="center">
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
   <a href="#overview"><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
-  <!-- <a href="./roomtours_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a> -->
   <a href="https://huggingface.co/aist-cvrt/lam3c"><img src="https://img.shields.io/badge/HuggingFace-LAM3C-yellow" alt="LAM3C"></a>
+   <a href="./roomtours_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a>
 </p>
 
 ---
