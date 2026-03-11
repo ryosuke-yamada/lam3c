@@ -29,6 +29,13 @@ except ImportError:
     flash_attn = None
 
 
+def use_headless_mode():
+    headless_env = os.getenv("LAM3C_HEADLESS")
+    if headless_env is not None:
+        return headless_env == "1"
+    return not (os.getenv("DISPLAY") or os.getenv("WAYLAND_DISPLAY"))
+
+
 def to_numpy(x):
     if isinstance(x, torch.Tensor):
         x = x.clone().detach().cpu().numpy()
@@ -76,6 +83,7 @@ if __name__ == "__main__":
     lam3c.utils.set_seed(6463323)
     # Load model (prefer local checkpoint before HuggingFace)
     repo_id = os.getenv("LAM3C_HF_REPO_ID", "aist-cvrt/lam3c")
+    # Used for local fallback checkpoints and headless output paths.
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     default_ckpt = os.path.join(
         project_root, "weights", "lam3c_roomtours49k_ptv3-large.infer.pth"
@@ -90,6 +98,7 @@ if __name__ == "__main__":
 
     try:
         model = lam3c.load("lam3c", repo_id=repo_id, custom_config=custom_config).cuda()
+        model_source = f"huggingface:{repo_id}"
         print(f"[LAM3C] Loaded checkpoint from HuggingFace repo: {repo_id}")
     except Exception as e:
         if not os.path.isfile(local_ckpt):
@@ -99,6 +108,8 @@ if __name__ == "__main__":
             ) from e
         print(f"[LAM3C] Falling back to local checkpoint: {local_ckpt}")
         model = lam3c.load(local_ckpt, custom_config=custom_config).cuda()
+        model_source = f"local:{local_ckpt}"
+    print(f"[LAM3C] Using checkpoint source: {model_source}")
     # Load default data transform pipeline
     transform = lam3c.transform.default()
     # Load data
@@ -214,7 +225,7 @@ if __name__ == "__main__":
                 verbose=False,
             )
         )
-        if os.getenv("LAM3C_HEADLESS", "0") == "1":
+        if use_headless_mode():
             os.makedirs(os.path.join(project_root, "outputs"), exist_ok=True)
             out_global = os.path.join(project_root, "outputs", "demo1_similarity_global.ply")
             out_local = os.path.join(project_root, "outputs", "demo1_similarity_local.ply")

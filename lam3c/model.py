@@ -796,16 +796,34 @@ def load(
         stem_weight = state_dict["embedding.stem.linear.weight"]
         stem_out, in_channels = stem_weight.shape[0], stem_weight.shape[1]
 
-        is_large = stem_out == 64
+        # Explicitly map known PTv3 variants by stem output width.
+        # This avoids silently treating unknown checkpoints as Base.
+        variant_by_stem_out = {
+            48: dict(
+                variant_name="PTv3-Base",
+                enc_channels=(48, 96, 192, 384, 512),
+                enc_num_head=(3, 6, 12, 24, 32),
+            ),
+            64: dict(
+                variant_name="PTv3-Large",
+                enc_channels=(64, 128, 256, 512, 768),
+                enc_num_head=(4, 8, 16, 32, 48),
+            ),
+        }
+        if stem_out not in variant_by_stem_out:
+            raise RuntimeError(
+                "Unsupported checkpoint width at embedding stem: "
+                f"stem_out={stem_out}. Supported values are "
+                f"{sorted(variant_by_stem_out.keys())} for PTv3 Base/Large."
+            )
+        variant = variant_by_stem_out[stem_out]
         common_config = dict(
             in_channels=in_channels,
             order=("z", "z-trans", "hilbert", "hilbert-trans"),
             stride=(2, 2, 2, 2),
             enc_depths=(3, 3, 3, 12, 3),
-            enc_channels=(64, 128, 256, 512, 768)
-            if is_large
-            else (48, 96, 192, 384, 512),
-            enc_num_head=(4, 8, 16, 32, 48) if is_large else (3, 6, 12, 24, 32),
+            enc_channels=variant["enc_channels"],
+            enc_num_head=variant["enc_num_head"],
             enc_patch_size=(1024, 1024, 1024, 1024, 1024),
             mlp_ratio=4,
             qkv_bias=True,
@@ -835,7 +853,7 @@ def load(
 
         print(
             "[LAM3C] Converted training checkpoint to inference format using "
-            f"{'PTv3-Large' if is_large else 'PTv3-Base'} compatibility config "
+            f"{variant['variant_name']} compatibility config "
             f"(source={ckpt_kind})."
         )
         return {"config": compat_config, "state_dict": state_dict}

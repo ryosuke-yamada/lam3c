@@ -6,7 +6,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
+  - python=3.9
   - pip
   - cuda
   - conda-forge::cudnn
@@ -26,6 +26,8 @@ dependencies:
   - open3d  # for demo visualization
   - matplotlib  # for demo visualization
   - pip:
-    - torch-scatter --find-links https://data.pyg.org/whl/torch-2.5.0+cu124.html
-    - git+https://github.com/Dao-AILab/flash-attention.git
+    - --find-links https://data.pyg.org/whl/torch-2.5.0+cu124.html
+    - torch-scatter
     - spconv-cu124
+    - lark>=1.0.0
+    - fire

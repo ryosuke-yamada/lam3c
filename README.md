@@ -2,38 +2,29 @@
     <img src="assets/logo.png" width="400" style="margin-bottom: 0.2;"/>
 </p>
 
-<!-- <p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p> -->
-<h1 align="center">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</h1>
+<h1 align="center">3D <em>sans</em> 3D Scans: Scalable Pre-training from Video-Generated Point Clouds</h1>
 
 
 <p align="center">
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
-  <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
-  <a href="#overview"><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
+  <a href=""><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
+  <a href=""><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
   <a href="https://huggingface.co/aist-cvrt/lam3c"><img src="https://img.shields.io/badge/HuggingFace-LAM3C-yellow" alt="LAM3C"></a>
-   <a href="./roomtours_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a>
+   <a href=""><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a>
 </p>
 
 ---
 
 This repository contains the official implementation of LAM3C and the RoomTours pipeline.
 
-![LAM3C scaling results](assets/lam3c_scaling.png)
 > ### LAM3C Message
 > **The bottleneck of 3D self-supervised learning is not algorithms alone, but the scarcity of 3D data. Turning the vast sea of unlabeled internet videos into 3D point clouds unlocks a scalable source of 3D supervision.**
 
+![LAM3C scaling results](assets/lam3c_scaling.png)
 
----
 
 ## TL;DR
-This paper shows that 3D self-supervised learning can be trained using only video-generated point clouds reconstructed from unlabeled videos, without relying on real 3D scans.
-
-We introduce:
-
-- **RoomTours** – a scalable pipeline that converts unlabeled indoor videos into video-generated point clouds
-- **LAM3C** – a 3D self-supervised learning designed to learn robust representations from noisy video-generated point clouds
-
-LAM3C transfers well to indoor semantic and instance segmentation.
+This paper shows that 3D self-supervised learning can be trained using only video-generated point clouds reconstructed from unlabeled videos, without relying on real 3D scans. We introduce: **RoomTours** is a scalable pipeline that converts unlabeled indoor videos into video-generated point clouds. **LAM3C** is a 3D self-supervised learning designed to learn robust representations from noisy video-generated point clouds.LAM3C transfers well to indoor semantic and instance segmentation.
 
 
 ## News
@@ -54,7 +45,7 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 ## Requirements
 
 - Conda
-- Python 3.10
+- Python 3.9
 - PyTorch 2.5.0
 - CUDA 12.4
 - NVIDIA GPU for CUDA execution
@@ -65,15 +56,21 @@ This repo provide two ways of installation: **standalone mode** and **package mo
 
 - The **standalone mode** is recommended for users who want to use the code for quick inference and visualization. We provide a most easy way to install the environment by using `conda` environment file. The whole environment including `cuda` and `pytorch` can be easily installed by running the following command:
   ```bash
-  # Create and activate conda environment named as 'sonata'
-  # cuda: 12.4, pytorch: 2.5.0
+  # Create and activate conda environment named as 'lam3c'
 
   # run `unset CUDA_PATH` if you have installed cuda in your local environment
   conda env create -f environment.yml --verbose
-  conda activate sonata
+  conda activate lam3c
+
+  # if torch-scatter installation fails, install explicitly from the PyG wheel index
+  pip install --no-build-isolation torch-scatter -f https://data.pyg.org/whl/torch-2.5.0+cu124.html
+
+  # optional: install FlashAttention after torch is available in this env
+  # (required on some systems to avoid pip build-isolation issues)
+  pip install --no-build-isolation git+https://github.com/Dao-AILab/flash-attention.git
   ```
 
-  *We install **FlashAttention** by default, yet not necessary. If FlashAttention is not available in your local environment, it's okay, check Model section in [Quick Start](#quick-start) for solution.*
+  *FlashAttention is optional. If installation fails in your environment, you can skip it and use the fallback path (see Model section in [Quick Start](#quick-start)).*
 
 - The **package mode** is recommended for users who want to inject our model into their own codebase. We provide a `setup.py` file for installation. You can install the package by running the following command:
   ```bash
@@ -82,11 +79,12 @@ This repo provide two ways of installation: **standalone mode** and **package mo
   # CUDA_VERSION: cuda version of local environment (e.g., 124), check by running 'nvcc --version'
   # TORCH_VERSION: torch version of local environment (e.g., 2.5.0), check by running 'python -c "import torch; print(torch.__version__)"'
   pip install spconv-cu${CUDA_VERSION}
-  pip install torch-scatter -f https://data.pyg.org/whl/torch-{TORCH_VERSION}+cu${CUDA_VERSION}.html
-  pip install git+https://github.com/Dao-AILab/flash-attention.git
+  pip install --no-build-isolation torch-scatter -f https://data.pyg.org/whl/torch-{TORCH_VERSION}+cu${CUDA_VERSION}.html
+  # optional:
+  pip install --no-build-isolation git+https://github.com/Dao-AILab/flash-attention.git
   pip install huggingface_hub timm
 
-  # (optional, or directly copy the sonata folder to your project)
+  # (optional, or directly copy the lam3c folder to your project)
   python setup.py install
   ```
   Additionally, for running our **demo code**, the following packages are also required:
@@ -99,26 +97,21 @@ This repo provide two ways of installation: **standalone mode** and **package mo
 
 Let's first begin with simple visualization demos with LAM3C, our pre-trained PointTransformerV3 (PTv3) model.
 
+### Visualization
 ![LAM3C demo](assets/lam3c_demo.png)
 
-
-
-### Visualization
-
-We provide similarity heatmap and PCA visualization demos in the `demo` folder.
+We provide demos for PCA feature visualization, similarity heatmaps, semantic segmentation, and batched forward inference in the `demo` folder.
 
 ```bash
-# optional: local checkpoints (useful on offline/HF-restricted environments)
-export LAM3C_LOCAL_CKPT="$(pwd)/weights/lam3c_roomtours49k_ptv3-large.infer.pth"
-export LAM3C_LOCAL_LINEAR_HEAD_CKPT="$(pwd)/weights/lam3c_linear_prob_head_sc.pth"
-
-# headless mode (recommended on servers such as ABCI)
-export LAM3C_HEADLESS=1
+# default: checkpoints are downloaded from HuggingFace
+# optional: use local checkpoints on offline/HF-restricted environments
+# export LAM3C_LOCAL_CKPT="$(pwd)/weights/lam3c_roomtours49k_ptv3-large.infer.pth"
+# export LAM3C_LOCAL_LINEAR_HEAD_CKPT="$(pwd)/weights/lam3c_linear_prob_head_sc.pth"
 export PYTHONPATH=./
-
-python demo/0_pca.py
-python demo/1_similarity.py
-python demo/2_sem_seg.py  # linear probed head on ScanNet
+python demo/0_pca.py  # PCA feature visualization on a single scene
+python demo/1_similarity.py  # similarity heatmap between local and global views
+python demo/2_sem_seg.py  # semantic segmentation with a linear probing head on ScanNet
+python demo/3_batch_forward.py  # batched inference with PCA feature visualization
 ```
 
 ### Inference on custom data
@@ -151,6 +144,8 @@ One sample can be loaded by:
 ```python
 point = lam3c.data.load("sample1")
 ```
+
+`sample1` is a Pointcept-provided demo sample downloaded from the Hugging Face dataset repository `pointcept/demo` (i.e., not user-collected data in this repository).
 
 **Transform.** The transform pipeline is shared with the Pointcept style. You can build it by:
 
@@ -277,12 +272,29 @@ If you find our LAM3C work useful, please cite:
   year={2026}
 }
 ```
+```bib
+@inproceedings{wu2025sonata,
+    title={Sonata: Self-Supervised Learning of Reliable Point Representations},
+    author={Wu, Xiaoyang and DeTone, Daniel and Frost, Duncan and Shen, Tianwei and Xie, Chris and Yang, Nan and Engel, Jakob and Newcombe, Richard and Zhao, Hengshuang and Straub, Julian},
+    booktitle={CVPR},
+    year={2025}
+}
+```
+```bib
+@misc{pointcept2023,
+    title={Pointcept: A Codebase for Point Cloud Perception Research},
+    author={Pointcept Contributors},
+    howpublished={\url{https://github.com/Pointcept/Pointcept}},
+    year={2023}
+}
+```
 
 ## License
 
 - **Code:** MIT License.
 - **LAM3C weights:** Creative Commons BY-NC 4.0 (free for research/education, **no commercial use**).
 - **RoomTours / generated data:** Creative Commons BY-NC 4.0 (free for research/education, **no commercial use**).
+- **Demo sample data:** loaded from Pointcept's `pointcept/demo` dataset repository on Hugging Face.
 - **Upstream attribution:** This repository includes/adapts code from Sonata.
 
 See `LICENSE`, `NOTICE`, and `THIRD_PARTY_NOTICES.md` for details.
