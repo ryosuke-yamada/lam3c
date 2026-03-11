@@ -3,9 +3,8 @@
 </p>
 
 <!-- <p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p> -->
-<p align="center"><strong><font size="8">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
+<p align="center"><strong><font size="14">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
 
----
 
 <p align="center">
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
@@ -15,6 +14,7 @@
   <a href="https://huggingface.co/aist-cvrt/lam3c"><img src="https://img.shields.io/badge/HuggingFace-LAM3C-yellow" alt="LAM3C"></a>
 </p>
 
+---
 
 This repository contains the official implementation of LAM3C and the RoomTours pipeline.
 
