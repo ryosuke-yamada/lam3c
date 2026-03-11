@@ -1,22 +1,26 @@
-# LAM3C & RoomTours
+<p align="center">
+    <img src="assets/logo.png" width="150" style="margin-bottom: 0.2;"/>
+</p>
 
-[![arXiv](https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg)](https://arxiv.org/abs/2512.23042)
-[![CVPR 2026](https://img.shields.io/badge/CVPR-2026-blue.svg)](https://arxiv.org/abs/2512.23042)
-[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](#license)
+<p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p>
+<p align="center"><strong><font size="4">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
 
-Official repository for **LAM3C (Laplacian-Aware Multi-level 3D Clustering with Sinkhorn-Knopp)**  
-and **RoomTours**, a pipeline for generating large-scale point clouds from unlabeled videos.
+---
 
-**Key idea:** 3D self-supervised learning can be trained entirely from video-generated point clouds reconstructed from unlabeled videos.
+<p align="center">
+  <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
+  <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
+  <a href="#overview"><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
+  <!-- <a href="./dataset_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a> -->
+  <a href="https://huggingface.co/aist-cvrt/lam3c"><img src="https://img.shields.io/badge/HuggingFace-LAM3C-yellow" alt="LAM3C"></a>
+</p>
 
-<!-- **Paper:** [3D sans 3D Scans: Scalable Pre-training from Video-Generated Point Clouds　(CVPR 2026 main track)](https://arxiv.org/pdf/2512.23042) -->
 
-[[ **Project Page** ]](#overview) [[**Pre-trained Models**]](#pretrained-models) [[ **Paper** ]](https://arxiv.org/pdf/2512.23042) [[ **Bib** ]](#citation)
+This repository contains the official implementation of LAM3C and the RoomTours pipeline.
 
 ![LAM3C scaling results](assets/lam3c_scaling.png)
 > ### LAM3C Message
-> **The bottleneck of 3D self-supervised learning is not algorithms alone, but the scarcity of 3D data.**  
-> **Turning the vast sea of unlabeled internet videos into 3D point clouds unlocks a scalable source of 3D supervision.**
+> **The bottleneck of 3D self-supervised learning is not algorithms alone, but the scarcity of 3D data. Turning the vast sea of unlabeled internet videos into 3D point clouds unlocks a scalable source of 3D supervision.**
 
 
 ---
@@ -27,7 +31,7 @@ This paper shows that 3D self-supervised learning can be trained using only vide
 We introduce:
 
 - **RoomTours** – a scalable pipeline that converts unlabeled indoor videos into video-generated point clouds
-- **LAM3C** – a 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds
+- **LAM3C** – a 3D self-supervised learning designed to learn robust representations from noisy video-generated point clouds
 
 LAM3C transfers well to indoor semantic and instance segmentation.
 
@@ -35,7 +39,7 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 
 ## News
 
-- Mar 2026: Released pre-training code with Pointcept support and demo visualization.
+- Mar 2026: Released RoomTours generation code and demo visualization.
 - Feb 2026: LAM3C was accepted to CVPR 2026.
 
 
@@ -43,16 +47,10 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 
 ## Overview
 
-This repository contains the official implementation of LAM3C and the RoomTours pipeline.
-
-LAM3C is a masked 3D self-supervised learning framework designed to learn robust representations from video-generated point clouds reconstructed from unlabeled videos.
-
-Main components:
-
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Inference](#inference-on-custom-data)
-- [Pre-trained Models](#pretrained-models)
+- [Model Zoo](#pretrained-models)
+- [RoomTours Pipeline](./dataset_gen/README.md)
 - [Citation](#citation)
 
 ---
