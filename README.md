@@ -11,7 +11,7 @@
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
   <a href="#overview"><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
-  <!-- <a href="./dataset_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a> -->
+  <!-- <a href="./roomtours_gen"><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a> -->
   <a href="https://huggingface.co/aist-cvrt/lam3c"><img src="https://img.shields.io/badge/HuggingFace-LAM3C-yellow" alt="LAM3C"></a>
 </p>
 
@@ -47,9 +47,8 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Model Zoo](#pretrained-models)
-- [RoomTours Pipeline](./dataset_gen/README.md)
+- [RoomTours Pipeline](./roomtours_gen/README.md)
 - [Citation](#citation)
-
 
 
 ## Requirements
@@ -256,6 +255,14 @@ HuggingFace links are also kept below and will be updated as files are published
 - `lam3c_linear_prob_head_sc.pth` (ScanNet linear head for `demo/2_sem_seg.py`)  
   [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
 
+
+## RoomTours Pipeline
+
+RoomTours converts unlabeled indoor videos into training-ready point clouds for LAM3C pre-training.
+The pipeline includes video download, scene segmentation, Pi3 reconstruction, and point-cloud preprocessing.
+For setup and commands, see [`roomtours_gen/README.md`](./roomtours_gen/README.md).
+
+![RoomTours](assets/roomtours.png)
 
 
 ## Citation
