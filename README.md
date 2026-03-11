@@ -1,9 +1,9 @@
 <p align="center">
-    <img src="assets/logo.png" width="600" style="margin-bottom: 0.2;"/>
+    <img src="assets/logo.png" width="400" style="margin-bottom: 0.2;"/>
 </p>
 
 <!-- <p align="center"><strong><font size="6">LAM3C & RoomTours</font></strong></p> -->
-<p align="center"><strong><font size="6">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
+<p align="center"><strong><font size="8">3d <em>sans</em> 3d scans: scalable pre-training from video-generated point clouds</font></strong></p>
 
 ---
 
@@ -35,15 +35,12 @@ We introduce:
 
 LAM3C transfers well to indoor semantic and instance segmentation.
 
----
 
 ## News
 
-- Mar 2026: Released RoomTours generation code and demo visualization.
-- Feb 2026: LAM3C was accepted to CVPR 2026.
+- Mar 2026: Released RoomTours generation code and inference demo visualization.
+- Feb 2026: LAM3C was accepted to CVPR 2026 (main track).
 
-
----
 
 ## Overview
 
@@ -53,7 +50,15 @@ LAM3C transfers well to indoor semantic and instance segmentation.
 - [RoomTours Pipeline](./dataset_gen/README.md)
 - [Citation](#citation)
 
----
+
+
+## Requirements
+
+- Conda
+- Python 3.10
+- PyTorch 2.5.0
+- CUDA 12.4
+- NVIDIA GPU for CUDA execution
 
 ## Installation
 
@@ -89,7 +94,7 @@ This repo provide two ways of installation: **standalone mode** and **package mo
   ```bash
   pip install open3d fast_pytorch_kmeans psutil numpy==1.26.4  # currently, open3d does not support numpy 2.x
   ```
----
+
 
 ## Quick Start
 
@@ -97,13 +102,6 @@ Let's first begin with simple visualization demos with LAM3C, our pre-trained Po
 
 ![LAM3C demo](assets/lam3c_demo.png)
 
-### Requirements
-
-- Conda
-- Python 3.10
-- PyTorch 2.5.0
-- CUDA 12.4
-- NVIDIA GPU for CUDA execution
 
 
 ### Visualization
@@ -245,19 +243,20 @@ while "pooling_parent" in point.keys():
 feat = point.feat[point.inverse]
 ```
 
----
 
-## Pre-trained Models
+
+## Model Zoo
 
 Download pre-trained checkpoints from Google Drive (recommended for now) and place them under `weights/`.
 HuggingFace links are also kept below and will be updated as files are published.
+
 
 - `lam3c_roomtours49k_ptv3-large.infer.pth` (inference backbone)  
   [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
 - `lam3c_linear_prob_head_sc.pth` (ScanNet linear head for `demo/2_sem_seg.py`)  
   [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
 
----
+
 
 ## Citation
 
@@ -272,19 +271,11 @@ If you find our LAM3C work useful, please cite:
 }
 ```
 
----
-
-## Acknowledgment
-
-We thank the ABCI team at AIST for providing computational resources.
-
----
-
 ## License
 
-- **Code:** Apache-2.0.
-- **Upstream attribution:** This repository includes/adapts code from Sonata (Apache-2.0).
-- **Model weights:** Separate terms may apply (TBD).
-- **Dataset / generated data:** Separate terms may apply (TBD).
+- **Code:** MIT License.
+- **LAM3C weights:** Creative Commons BY-NC 4.0 (free for research/education, **no commercial use**).
+- **RoomTours / generated data:** Creative Commons BY-NC 4.0 (free for research/education, **no commercial use**).
+- **Upstream attribution:** This repository includes/adapts code from Sonata.
 
 See `LICENSE`, `NOTICE`, and `THIRD_PARTY_NOTICES.md` for details.

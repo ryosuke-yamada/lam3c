@@ -1,5 +1,9 @@
 LAM3C NOTICE
 
+Repository-level terms:
+- Original LAM3C code: MIT License
+- Pre-trained model weights and dataset/generated data: CC BY-NC 4.0 (non-commercial)
+
 This repository includes code adapted from Sonata:
 - Repository: https://github.com/facebookresearch/sonata
 - Original license: Apache License 2.0

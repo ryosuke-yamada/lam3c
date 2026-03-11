@@ -1,5 +1,8 @@
 # Third-Party Notices
 
+Primary repository terms (MIT for original code, CC BY-NC 4.0 for model/data)
+are described in `LICENSE`. This file covers third-party components only.
+
 ## Sonata (facebookresearch/sonata)
 
 - **Source:** https://github.com/facebookresearch/sonata
