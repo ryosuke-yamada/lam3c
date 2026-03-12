@@ -15,6 +15,7 @@
 # Modifications Copyright (c) 2026 Ryousuke Yamada.
 
 
+import argparse
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,6 +35,37 @@ def use_headless_mode():
     if headless_env is not None:
         return headless_env == "1"
     return not (os.getenv("DISPLAY") or os.getenv("WAYLAND_DISPLAY"))
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="LAM3C demo: similarity heatmap")
+    parser.add_argument(
+        "--model-size",
+        choices=("base", "large"),
+        default=os.getenv("LAM3C_MODEL_SIZE", "large"),
+        help="Preset model size used for default local checkpoint path.",
+    )
+    parser.add_argument(
+        "--ckpt",
+        default=None,
+        help="Optional local backbone checkpoint path. Overrides env/default.",
+    )
+    parser.add_argument(
+        "--hf-repo-id",
+        default=os.getenv("LAM3C_HF_REPO_ID", "aist-cvrt/lam3c"),
+        help="HuggingFace model repo id.",
+    )
+    return parser.parse_args()
+
+
+def get_model_tag(model_source):
+    if model_source.startswith("local:"):
+        ckpt_path = model_source.split(":", 1)[1]
+        return os.path.splitext(os.path.basename(ckpt_path))[0]
+    if model_source.startswith("huggingface:"):
+        repo_id = model_source.split(":", 1)[1]
+        return repo_id.replace("/", "__")
+    return model_source.replace(":", "__").replace("/", "__")
 
 
 def to_numpy(x):
@@ -79,16 +111,21 @@ def get_line_set(coord, line, color=(1.0, 0.0, 0.0), verbose=True):
 
 
 if __name__ == "__main__":
+    args = parse_args()
     # set random seed
     lam3c.utils.set_seed(6463323)
     # Load model (prefer local checkpoint before HuggingFace)
-    repo_id = os.getenv("LAM3C_HF_REPO_ID", "aist-cvrt/lam3c")
+    repo_id = args.hf_repo_id
     # Used for local fallback checkpoints and headless output paths.
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    default_ckpt_name = {
+        "base": "lam3c_ptv3-base_roomtours49k.pth",
+        "large": "lam3c_ptv3-large_roomtours49k.pth",
+    }[args.model_size]
     default_ckpt = os.path.join(
-        project_root, "weights", "lam3c_roomtours49k_ptv3-large.infer.pth"
+        project_root, "weights", default_ckpt_name
     )
-    local_ckpt = os.getenv("LAM3C_LOCAL_CKPT", default_ckpt)
+    local_ckpt = args.ckpt or os.getenv("LAM3C_LOCAL_CKPT", default_ckpt)
     custom_config = None
     if flash_attn is None:
         custom_config = dict(
@@ -226,10 +263,11 @@ if __name__ == "__main__":
             )
         )
         if use_headless_mode():
-            os.makedirs(os.path.join(project_root, "outputs"), exist_ok=True)
-            out_global = os.path.join(project_root, "outputs", "demo1_similarity_global.ply")
-            out_local = os.path.join(project_root, "outputs", "demo1_similarity_local.ply")
-            out_line = os.path.join(project_root, "outputs", "demo1_similarity_line.ply")
+            output_root = os.path.join(project_root, "outputs", get_model_tag(model_source))
+            os.makedirs(output_root, exist_ok=True)
+            out_global = os.path.join(output_root, "demo1_similarity_global.ply")
+            out_local = os.path.join(output_root, "demo1_similarity_local.ply")
+            out_line = os.path.join(output_root, "demo1_similarity_line.ply")
             o3d.io.write_point_cloud(out_global, pcds[0])
             o3d.io.write_point_cloud(out_local, pcds[1])
             o3d.io.write_line_set(out_line, pcds[2])

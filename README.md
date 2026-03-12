@@ -103,15 +103,37 @@ Let's first begin with simple visualization demos with LAM3C, our pre-trained Po
 We provide demos for PCA feature visualization, similarity heatmaps, semantic segmentation, and batched forward inference in the `demo` folder.
 
 ```bash
-# default: checkpoints are downloaded from HuggingFace
-# optional: use local checkpoints on offline/HF-restricted environments
-# export LAM3C_LOCAL_CKPT="$(pwd)/weights/lam3c_roomtours49k_ptv3-large.infer.pth"
-# export LAM3C_LOCAL_LINEAR_HEAD_CKPT="$(pwd)/weights/lam3c_linear_prob_head_sc.pth"
+# 1) activate environment
+conda activate lam3c
+unset PYTHONPATH
+export PYTHONNOUSERSITE=1
 export PYTHONPATH=./
-python demo/0_pca.py  # PCA feature visualization on a single scene
-python demo/1_similarity.py  # similarity heatmap between local and global views
-python demo/2_sem_seg.py  # semantic segmentation with a linear probing head on ScanNet
-python demo/3_batch_forward.py  # batched inference with PCA feature visualization
+
+# 2) (optional) headless output on servers
+# (writes .ply to outputs/<pretrained-model-name>/)
+# export LAM3C_HEADLESS=1
+
+# 3-A) run with default HuggingFace checkpoints (large)
+python demo/0_pca.py
+python demo/1_similarity.py
+python demo/2_sem_seg.py
+python demo/3_batch_forward.py
+
+# 3-B) run with local preset checkpoints (switchable model size via --model-size)
+python demo/0_pca.py --model-size base
+python demo/1_similarity.py --model-size base
+python demo/2_sem_seg.py --model-size base
+python demo/3_batch_forward.py --model-size base
+
+# (optional) run the same demos with local large checkpoints
+python demo/0_pca.py --model-size large
+python demo/1_similarity.py --model-size large
+python demo/2_sem_seg.py --model-size large
+python demo/3_batch_forward.py --model-size large
+
+# 3-C) run with custom checkpoints
+python demo/0_pca.py --ckpt /path/to/custom_backbone.infer.pth
+python demo/2_sem_seg.py --ckpt /path/to/custom_backbone.infer.pth --head-ckpt /path/to/custom_linear_head.pth
 ```
 
 ### Inference on custom data
