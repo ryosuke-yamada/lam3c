@@ -774,8 +774,15 @@ def load(
                 "large": "lam3c_ptv3-large_roomtours49k.pth",
             },
             "lam3c_linear_prob_head_sc": {
-                "base": "lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth",
-                "large": "lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth",
+                # Prefer corrected "scannet" naming while keeping legacy fallback.
+                "base": [
+                    "lam3c_ptv3-base_roomtours49k_probe-head_scannet.pth",
+                    "lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth",
+                ],
+                "large": [
+                    "lam3c_ptv3-large_roomtours49k_probe-head_scannet.pth",
+                    "lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth",
+                ],
             },
             "lam3c_base": {
                 "base": "lam3c_ptv3-base_roomtours49k.pth",
@@ -788,7 +795,9 @@ def load(
                     "Expected one of {'base', 'large'}."
                 )
             filename = size_to_filename.get(model_name, {}).get(requested_size)
-            if filename is not None:
+            if isinstance(filename, (list, tuple)):
+                candidates.extend(filename)
+            elif filename is not None:
                 candidates.append(filename)
         candidates.append(f"{model_name}.pth")
         # Keep order and deduplicate if alias/legacy name matches.

@@ -74,6 +74,13 @@ def get_model_tag(model_source):
     return model_source.replace(":", "__").replace("/", "__")
 
 
+def first_existing_file(paths):
+    for path in paths:
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 # ScanNet Meta data
 VALID_CLASS_IDS_20 = (
     1,
@@ -219,14 +226,20 @@ if __name__ == "__main__":
         model_source = f"local:{local_ckpt}"
     print(f"[LAM3C] Using backbone checkpoint source: {model_source}")
     # Load linear probing seg head
-    default_head_ckpt_name = {
-        "base": "lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth",
-        "large": "lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth",
+    default_head_ckpt_names = {
+        "base": (
+            "lam3c_ptv3-base_roomtours49k_probe-head_scannet.pth",
+        ),
+        "large": (
+            "lam3c_ptv3-large_roomtours49k_probe-head_scannet.pth",
+        ),
     }[args.model_size]
-    default_head_ckpt = os.path.join(project_root, "weights", default_head_ckpt_name)
-    local_head_ckpt = (
-        args.head_ckpt
-        or os.getenv("LAM3C_LOCAL_LINEAR_HEAD_CKPT", default_head_ckpt)
+    default_head_ckpt_candidates = [
+        os.path.join(project_root, "weights", name) for name in default_head_ckpt_names
+    ]
+    user_head_ckpt = args.head_ckpt or os.getenv("LAM3C_LOCAL_LINEAR_HEAD_CKPT")
+    local_head_ckpt_candidates = (
+        [user_head_ckpt] if user_head_ckpt else default_head_ckpt_candidates
     )
     try:
         ckpt = lam3c.load(
@@ -238,10 +251,16 @@ if __name__ == "__main__":
         head_source = f"huggingface:{repo_id}"
         print(f"[LAM3C] Loaded linear head from HuggingFace repo: {repo_id}")
     except Exception as e:
-        if not os.path.isfile(local_head_ckpt):
+        local_head_ckpt = first_existing_file(local_head_ckpt_candidates)
+        if local_head_ckpt is None:
+            looked_at = "\n".join(
+                f"  - {path}" for path in local_head_ckpt_candidates
+            )
             raise RuntimeError(
                 f"Failed to load linear head from HuggingFace ({repo_id}) and local "
-                f"head checkpoint not found at {local_head_ckpt}"
+                "head checkpoint was not found. Checked:\n"
+                f"{looked_at}\n"
+                "Set --head-ckpt (or LAM3C_LOCAL_LINEAR_HEAD_CKPT) to a valid path."
             ) from e
         print(f"[LAM3C] Falling back to local linear head: {local_head_ckpt}")
         ckpt = lam3c.load(local_head_ckpt, ckpt_only=True)
