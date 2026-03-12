@@ -764,7 +764,36 @@ def load(
     download_root: str = None,
     custom_config: dict = None,
     ckpt_only: bool = False,
+    model_size: str = None,
 ):
+    def _hf_filename_candidates(model_name: str, requested_size: str):
+        candidates = []
+        size_to_filename = {
+            "lam3c": {
+                "base": "lam3c_ptv3-base_roomtours49k.pth",
+                "large": "lam3c_ptv3-large_roomtours49k.pth",
+            },
+            "lam3c_linear_prob_head_sc": {
+                "base": "lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth",
+                "large": "lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth",
+            },
+            "lam3c_base": {
+                "base": "lam3c_ptv3-base_roomtours49k.pth",
+            },
+        }
+        if requested_size is not None:
+            if requested_size not in ("base", "large"):
+                raise ValueError(
+                    f"Unsupported model_size={requested_size}. "
+                    "Expected one of {'base', 'large'}."
+                )
+            filename = size_to_filename.get(model_name, {}).get(requested_size)
+            if filename is not None:
+                candidates.append(filename)
+        candidates.append(f"{model_name}.pth")
+        # Keep order and deduplicate if alias/legacy name matches.
+        return list(dict.fromkeys(candidates))
+
     def _compat_from_training_checkpoint(raw_ckpt):
         """
         Convert a training-time checkpoint to inference checkpoint format.
@@ -778,12 +807,20 @@ def load(
         raw_state = raw_ckpt["state_dict"]
         prefix = None
         ckpt_kind = None
-        if any(k.startswith("module.student.backbone.") for k in raw_state.keys()):
-            prefix = "module.student.backbone."
-            ckpt_kind = "ssl_pretrain"
-        elif any(k.startswith("module.backbone.") for k in raw_state.keys()):
-            prefix = "module.backbone."
-            ckpt_kind = "downstream_finetune"
+        # Accept both DDP-wrapped and non-DDP checkpoints.
+        # - module.student.backbone.* / student.backbone.* : SSL pretraining
+        # - module.backbone.*         / backbone.*         : downstream finetuning
+        prefix_candidates = (
+            ("module.student.backbone.", "ssl_pretrain"),
+            ("student.backbone.", "ssl_pretrain"),
+            ("module.backbone.", "downstream_finetune"),
+            ("backbone.", "downstream_finetune"),
+        )
+        for cand_prefix, cand_kind in prefix_candidates:
+            if any(k.startswith(cand_prefix) for k in raw_state.keys()):
+                prefix = cand_prefix
+                ckpt_kind = cand_kind
+                break
         if prefix is None:
             return None
 
@@ -859,14 +896,29 @@ def load(
         return {"config": compat_config, "state_dict": state_dict}
 
     if name in MODELS:
-        print(f"Loading checkpoint from HuggingFace: {name} ...")
-        ckpt_path = hf_hub_download(
-            repo_id=repo_id,
-            filename=f"{name}.pth",
-            repo_type="model",
-            revision="main",
-            local_dir=download_root or os.path.expanduser("~/.cache/lam3c/ckpt"),
-        )
+        hf_candidates = _hf_filename_candidates(name, model_size)
+        download_dir = download_root or os.path.expanduser("~/.cache/lam3c/ckpt")
+        last_error = None
+        ckpt_path = None
+        for hf_filename in hf_candidates:
+            print(f"Loading checkpoint from HuggingFace: {hf_filename} ...")
+            try:
+                ckpt_path = hf_hub_download(
+                    repo_id=repo_id,
+                    filename=hf_filename,
+                    repo_type="model",
+                    revision="main",
+                    local_dir=download_dir,
+                )
+                break
+            except Exception as e:
+                last_error = e
+        if ckpt_path is None:
+            checked = ", ".join(hf_candidates)
+            raise RuntimeError(
+                f"Failed to download HuggingFace checkpoint from {repo_id}. "
+                f"Checked filenames: [{checked}]"
+            ) from last_error
     elif os.path.isfile(name):
         print(f"Loading checkpoint in local path: {name} ...")
         ckpt_path = name

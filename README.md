@@ -109,27 +109,29 @@ unset PYTHONPATH
 export PYTHONNOUSERSITE=1
 export PYTHONPATH=./
 
-# 2) (optional) headless output on servers
-# (writes .ply to outputs/<pretrained-model-name>/)
+# 2) (optional) headless output on servers (writes .ply files to outputs/)
 # export LAM3C_HEADLESS=1
 
-# 3-A) run with default HuggingFace checkpoints (large)
-python demo/0_pca.py
-python demo/1_similarity.py
-python demo/2_sem_seg.py
-python demo/3_batch_forward.py
+# 3-A) recommended: run with HuggingFace checkpoints
+# default model size is large
+python demo/0_pca.py --hf-repo-id aist-cvrt/lam3c-roomtours
+python demo/1_similarity.py --hf-repo-id aist-cvrt/lam3c-roomtours
+python demo/2_sem_seg.py --hf-repo-id aist-cvrt/lam3c-roomtours
+python demo/3_batch_forward.py --hf-repo-id aist-cvrt/lam3c-roomtours
 
-# 3-B) run with local preset checkpoints (switchable model size via --model-size)
-python demo/0_pca.py --model-size base
-python demo/1_similarity.py --model-size base
-python demo/2_sem_seg.py --model-size base
-python demo/3_batch_forward.py --model-size base
+# switch to base model size on HuggingFace
+python demo/0_pca.py --hf-repo-id aist-cvrt/lam3c-roomtours --model-size base
+python demo/1_similarity.py --hf-repo-id aist-cvrt/lam3c-roomtours --model-size base
+python demo/2_sem_seg.py --hf-repo-id aist-cvrt/lam3c-roomtours --model-size base
+python demo/3_batch_forward.py --hf-repo-id aist-cvrt/lam3c-roomtours --model-size base
 
-# (optional) run the same demos with local large checkpoints
-python demo/0_pca.py --model-size large
-python demo/1_similarity.py --model-size large
-python demo/2_sem_seg.py --model-size large
-python demo/3_batch_forward.py --model-size large
+# 3-B) fallback option: run with local preset checkpoints
+# Use this when HF access is unavailable or blocked.
+# Place the 4 checkpoint files under weights/ with names listed in "Model Zoo".
+python demo/0_pca.py --model-size base --ckpt weights/lam3c_ptv3-base_roomtours49k.pth
+python demo/0_pca.py --model-size large --ckpt weights/lam3c_ptv3-large_roomtours49k.pth
+python demo/2_sem_seg.py --model-size base --ckpt weights/lam3c_ptv3-base_roomtours49k.pth --head-ckpt weights/lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth
+python demo/2_sem_seg.py --model-size large --ckpt weights/lam3c_ptv3-large_roomtours49k.pth --head-ckpt weights/lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth
 
 # 3-C) run with custom checkpoints
 python demo/0_pca.py --ckpt /path/to/custom_backbone.infer.pth
@@ -144,18 +146,18 @@ Moved to [`demo/README.md`](./demo/README.md) for easier access while working in
 
 ## Model Zoo
 
-Download pre-trained checkpoints from Google Drive (recommended for now) and place them under `weights/`.
-HuggingFace links are also kept below and will be updated as files are published.
+Download pre-trained checkpoints from Google Drive and place them under `weights/` if you want local execution.
+For HuggingFace execution in this README, use repo id `aist-cvrt/lam3c-roomtours`.
 
 
 - `lam3c_ptv3-base_roomtours49k.pth` (LAM3C backbone, PTv3-base)  
-  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours)
 - `lam3c_ptv3-large_roomtours49k.pth` (LAM3C backbone, PTv3-large)  
-  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours)
 - `lam3c_ptv3-base_roomtours49k_probe-head_scennet.pth` (LAM3C => ScanNet linear probe head, PTv3-base)  
-  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours)
 - `lam3c_ptv3-large_roomtours49k_probe-head_scennet.pth` (LAM3C => ScanNet linear probe head, PTv3-large)  
-  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c)
+  [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link) | [HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours)
 
 
 ## RoomTours Pipeline

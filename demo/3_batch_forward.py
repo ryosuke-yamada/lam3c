@@ -104,7 +104,12 @@ if __name__ == "__main__":
         )
 
     try:
-        model = lam3c.load("lam3c", repo_id=repo_id, custom_config=custom_config).cuda()
+        model = lam3c.load(
+            "lam3c",
+            repo_id=repo_id,
+            custom_config=custom_config,
+            model_size=args.model_size,
+        ).cuda()
         model_source = f"huggingface:{repo_id}"
         print(f"[LAM3C] Loaded checkpoint from HuggingFace repo: {repo_id}")
     except Exception as e:

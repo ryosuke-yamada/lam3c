@@ -200,7 +200,12 @@ if __name__ == "__main__":
         )
 
     try:
-        model = lam3c.load("lam3c", repo_id=repo_id, custom_config=custom_config).cuda()
+        model = lam3c.load(
+            "lam3c",
+            repo_id=repo_id,
+            custom_config=custom_config,
+            model_size=args.model_size,
+        ).cuda()
         model_source = f"huggingface:{repo_id}"
         print(f"[LAM3C] Loaded checkpoint from HuggingFace repo: {repo_id}")
     except Exception as e:
@@ -225,7 +230,10 @@ if __name__ == "__main__":
     )
     try:
         ckpt = lam3c.load(
-            "lam3c_linear_prob_head_sc", repo_id=repo_id, ckpt_only=True
+            "lam3c_linear_prob_head_sc",
+            repo_id=repo_id,
+            ckpt_only=True,
+            model_size=args.model_size,
         )
         head_source = f"huggingface:{repo_id}"
         print(f"[LAM3C] Loaded linear head from HuggingFace repo: {repo_id}")
