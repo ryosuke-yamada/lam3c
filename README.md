@@ -216,10 +216,10 @@ For HuggingFace-based loading in the examples below, use repo id `aist-cvrt/lam3
 <td align="center">65.7</td>
 <td align="center">72.9</td>
 <td>
-<a href="https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link">Google Drive</a><br>
+<a href="https://drive.google.com/file/d/1aYT2SzY7ENLu2_Pq66Tr_UYSEu04b-13/view?usp=sharing">Google Drive</a><br>
 <a href="https://huggingface.co/aist-cvrt/lam3c-roomtours">HuggingFace</a>
 </td>
-<td><a href="docs/experiment_logs.md#ptv3-base">details</a></td>
+<td><a href="logs/pretrain/lam3c_ptv3-base_roomtours49k.public.log">log</a></td>
 </tr>
 
 <tr>
@@ -228,18 +228,18 @@ For HuggingFace-based loading in the examples below, use repo id `aist-cvrt/lam3
 <td><code>lam3c_ptv3-large_roomtours49k.pth</code></td>
 <td>RoomTours49k (VGPC)</td>
 <td align="center">69.5</td>
-<td align="center"><b>79.5</b></td>
+<td align="center">79.5</td>
 <td align="center">28.1</td>
 <td align="center">35.5</td>
 <td align="center">35.9</td>
 <td align="center">43.1</td>
 <td align="center">69.5</td>
-<td align="center"><b>75.5</b></td>
+<td align="center">75.5</td>
 <td>
-<a href="https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link">Google Drive</a><br>
+<a href="https://drive.google.com/file/d/1wq45YL3uUiSomCowdMbhyR3b1GgQ4fd0/view?usp=sharing">Google Drive</a><br>
 <a href="https://huggingface.co/aist-cvrt/lam3c-roomtours">HuggingFace</a>
 </td>
-<td><a href="docs/experiment_logs.md#ptv3-large">details</a></td>
+<td><a href="logs/pretrain/lam3c_ptv3-large_roomtours49k.public.log">log</a></td>
 </tr>
 
 </tbody>
@@ -249,8 +249,8 @@ For HuggingFace-based loading in the examples below, use repo id `aist-cvrt/lam3
 
 | Head | Backbone | Checkpoint | Target Dataset | Weights |
 | --- | --- | --- | --- | --- |
-| ScanNet linear probe head | PTv3-Base | `lam3c_ptv3-base_roomtours49k_probe-head_scannet.pth` | ScanNet | [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link)<br>[HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours) |
-| ScanNet linear probe head | PTv3-Large | `lam3c_ptv3-large_roomtours49k_probe-head_scannet.pth` | ScanNet | [Google Drive](https://drive.google.com/file/d/1hUK7JMZ_eTzFUDUasvJLeQkomD3SIHR3/view?usp=drive_link)<br>[HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours) |
+| ScanNet linear probe head | PTv3-Base | `lam3c_ptv3-base_roomtours49k_probe-head_scannet.pth` | ScanNet | [Google Drive](https://drive.google.com/file/d/1Y2V8t7jWoI0bYe7q8qamUC48z_cjxtzI/view?usp=sharing)<br>[HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours) |
+| ScanNet linear probe head | PTv3-Large | `lam3c_ptv3-large_roomtours49k_probe-head_scannet.pth` | ScanNet | [Google Drive](https://drive.google.com/file/d/1ROF03sZJUh3B5jvwZHg81A71T1nCLd-4/view?usp=sharing)<br>[HuggingFace](https://huggingface.co/aist-cvrt/lam3c-roomtours) |
 
 A single pretrained backbone is evaluated across multiple downstream datasets.  
 See [detailed experiment logs](docs/experiment_logs.md) for dataset-wise training and evaluation logs.
