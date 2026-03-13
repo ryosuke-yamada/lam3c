@@ -46,8 +46,9 @@ LAM3C transfers well to indoor semantic and instance segmentation tasks.
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Model Zoo](#model-zoo)
-- [Experiment Logs](#experiment-logs)
 - [RoomTours Pipeline](./roomtours_gen/README.md)
+- [LAM3C Pre-train](#pretrain)
+- [Experiment Logs](#experiment-logs)
 - [Citation](#citation)
 
 
@@ -157,7 +158,6 @@ python demo/2_sem_seg.py --ckpt /path/to/custom_backbone.infer.pth --head-ckpt /
 Moved to [`demo/README.md`](./demo/README.md) for easier access while working in the `demo` folder.
 
 
-
 ## Model Zoo
 
 Download checkpoints from Google Drive and place them under `weights/` for local execution.  
@@ -255,12 +255,6 @@ For HuggingFace-based loading in the examples below, use repo id `aist-cvrt/lam3
 A single pretrained backbone is evaluated across multiple downstream datasets.  
 See [detailed experiment logs](docs/experiment_logs.md) for dataset-wise training and evaluation logs.
 
-## Experiment Logs
-
-Detailed dataset-wise training and evaluation logs are available in:
-
-- [`docs/experiment_logs.md`](docs/experiment_logs.md)
-
 ## RoomTours Pipeline
 
 RoomTours converts unlabeled indoor videos into training-ready point clouds for LAM3C pre-training.
@@ -269,6 +263,31 @@ For setup and commands, see [`roomtours_gen/README.md`](./roomtours_gen/README.m
 
 ![RoomTours](assets/roomtours.png)
 
+## LAM3C Pre-train
+
+LAM3C pretraining is integrated on top of the vendored Pointcept training pipeline.
+Use `tools/train_lam3c.sh` as the repo-root entrypoint.
+
+```bash
+# PTv3-Base (recommended)
+bash tools/train_lam3c.sh \
+  configs/lam3c/pretrain/lam3c_v1m1_ptv3_base.py \
+  logs/lam3c_pretrain_base
+
+# PTv3-Large (optional)
+# bash tools/train_lam3c.sh \
+#   configs/lam3c/pretrain/lam3c_v1m1_ptv3_large.py \
+#   logs/lam3c_pretrain_large
+```
+
+For setup notes, dry-run checks, and more options, see [`docs/pretrain.md`](docs/pretrain.md).
+
+
+## Experiment Logs
+
+Detailed dataset-wise training and evaluation logs are available in:
+
+- [`docs/experiment_logs.md`](docs/experiment_logs.md)
 
 ## Citation
 
