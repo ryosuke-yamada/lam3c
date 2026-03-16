@@ -1,2 +1,0 @@
-from .stratified_transformer_v1m1_origin import StratifiedTransformer
-from .stratified_transformer_v1m2_refine import StratifiedTransformer
