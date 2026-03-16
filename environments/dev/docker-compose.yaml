@@ -3,7 +3,7 @@ services:
   frontend:
     build:
       args:
-        - BASE_IMAGE=node:23.9.0-bullseye-slim
+        - BASE_IMAGE=node:22-bookworm-slim
         - PROJECT_NAME=${PROJECT_NAME_ENV}
         - SERVICE_NAME=frontend
         - USER_NAME=${USER_NAME_ENV}
