@@ -76,10 +76,12 @@ function Home() {
         <div className="inline-block rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
           {lam3cData.venue}
         </div>
-        <div className="space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            {lam3cData.title}
-          </h1>
+        <div className="space-y-6">
+          <img
+            src="/logo.png"
+            alt="LAM3C"
+            className="mx-auto h-32 w-auto sm:h-44 md:h-56"
+          />
           <p className="text-xl text-muted-foreground sm:text-2xl md:text-3xl tracking-tight">
             {lam3cData.subtitle}
           </p>

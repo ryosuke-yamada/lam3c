@@ -24,14 +24,8 @@ export function Header() {
     <header className="fixed top-0 z-50 w-full border-b border-border bg-header-background/70 backdrop-blur-md flex justify-center">
       <div className="container flex h-16 items-center justify-between px-6 xl:w-4xl">
         <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center space-x-3">
-            <img
-              src="/logo.png"
-              alt="LAM3C logo"
-              className="h-10 w-auto"
-              loading="lazy"
-            />
-            <span className="font-bold text-lg hidden sm:inline">LAM3C</span>
+          <Link to="/" className="flex items-center">
+            <span className="font-bold text-lg">LAM3C</span>
           </Link>
         </div>
 
