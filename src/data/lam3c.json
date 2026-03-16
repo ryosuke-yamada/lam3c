@@ -5,7 +5,7 @@
   "authors": [
     {
       "name": "Ryousuke Yamada",
-      "affiliationIds": [1, 2],
+      "affiliationIds": [1,2],
       "url": ""
     },
     {
@@ -15,12 +15,12 @@
     },
     {
       "name": "Yoshihiro Fukuhara",
-      "affiliationIds": [1, 2],
+      "affiliationIds": [1],
       "url": ""
     },
     {
       "name": "Hirokatsu Kataoka",
-      "affiliationIds": [1, 2],
+      "affiliationIds": [1],
       "url": ""
     },
     {
@@ -35,15 +35,14 @@
     },
     {
       "name": "Yuki M. Asano",
-      "affiliationIds": [4],
+      "affiliationIds": [2],
       "url": ""
     }
   ],
   "affiliations": [
     { "id": 1, "name": "AIST" },
-    { "id": 2, "name": "cvpaper.challenge" },
-    { "id": 3, "name": "Valeo.ai" },
-    { "id": 4, "name": "University of Amsterdam" }
+    { "id": 2, "name": "University of Technology Nuremberg" },
+    { "id": 3, "name": "INRIA" }
   ],
   "links": {
     "arxiv": "https://arxiv.org/abs/2512.23042",
