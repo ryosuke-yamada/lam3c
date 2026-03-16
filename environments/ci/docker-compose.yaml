@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      args:
+        - BASE_IMAGE=node:23.9.0-bullseye-slim
+        - PROJECT_NAME=${PROJECT_NAME_ENV}
+        - SERVICE_NAME=frontend
+        - USER_NAME=${USER_NAME_ENV}
+        - GROUP_NAME=${GROUP_NAME_ENV}
+        - UID=${HOST_UID:?error}
+        - GID=${HOST_GID:?error}
+        - RUN_YARN_INSTALL_AT_BUILD_TIME=true
+      context: ../../
+      dockerfile: environments/Dockerfile
+    tty: true
+    volumes:
+        - ../../:/home/${USER_NAME_ENV}/${PROJECT_NAME_ENV}-frontend
+        # exclude
+        - /home/${USER_NAME_ENV}/${PROJECT_NAME_ENV}-frontend/node_modules

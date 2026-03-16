@@ -1,0 +1,61 @@
+{
+  "title": "Organizing Team",
+  "subtitle": "Meet the team behind the BigMAC Workshop",
+  "organizers": [
+    {
+      "name": "Yuki M. Asano",
+      "affiliation": "University of Technology Nuremberg (UTN)",
+      "photo": "/organizers/yuki.asano.png",
+      "website": "https://yukimasano.github.io/"
+    },
+    {
+      "name": "Anna Kukleva",
+      "affiliation": "Max-Planck Institute for Informatics",
+      "photo": "/organizers/anna.kukleva-302x302.jpg",
+      "website": "https://annusha.github.io/"
+    },
+    {
+      "name": "Hirokatsu Kataoka",
+      "affiliation": "AIST / Oxford VGG",
+      "photo": "/organizers/hirokatsu.kataoka.png",
+      "website": "https://hirokatsukataoka.net/"
+    },
+    {
+      "name": "Ryousuke Yamada",
+      "affiliation": "AIST / University of Technology Nuremberg (UTN)",
+      "photo": "/organizers/ryousuke.yamada.png",
+      "website": "https://ryosuke-yamada.github.io/"
+    },
+    {
+      "name": "Yoshihiro Fukuhara",
+      "affiliation": "AIST / Waseda University",
+      "photo": "/organizers/yoshihiro.fukuhara.png",
+      "website": "https://gatheluck.net/"
+    },
+    {
+      "name": "Go Irie",
+      "affiliation": "Tokyo University of Science",
+      "photo": "/organizers/go.irie-302x302.jpg",
+      "website": "https://scholar.google.co.jp/citations?user=2bCSG1AAAAAJ/"
+    },
+    {
+      "name": "Ivona Najdenkoska",
+      "affiliation": "University of Amsterdam",
+      "photo": "/organizers/ivona.najdenkoska-302x302.jpg",
+      "website": "https://ivonajdenkoska.github.io/"
+    },
+    {
+      "name": "Aida Nematzadeh",
+      "affiliation": "DeepMind",
+      "photo": "/organizers/aida.nematzadeh-302x302.jpg",
+      "website": "http://www.aidanematzadeh.me/"
+    },
+    {
+      "name": "Serge Belongie",
+      "affiliation": "University of Copenhagen",
+      "photo": "/organizers/serge.belongie-302x302.jpg",
+      "website": "https://serge.belongie.com/"
+    }
+  ],
+  "programChairs": []
+}

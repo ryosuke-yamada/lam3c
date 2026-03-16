@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cvpr2026-bigmac-workshop.limitlab.xyz/sitemap.xml

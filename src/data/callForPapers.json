@@ -1,0 +1,32 @@
+{
+  "title": "Topics",
+  "subtitle": "BigMAC Workshop Topics",
+  "topics": {
+    "core": [
+      "Emerging uses of pretrained vision models for 3D and generative AI",
+      "Prompting methods and techniques for pretrained vision models",
+      "Role of vision models in Multi- and omnimodal LLMs",
+      "Post-pretraining of vision foundation models",
+      "Cross-domain transfer and robustness of adapted vision models"
+    ]
+  },
+  "paperFormat": {
+    "submissionGuidelines": [],
+    "reviewProcess": "This workshop does not accept paper submissions. The workshop features invited talks and an invite-only poster session.",
+    "publication": ""
+  },
+  "submission": {
+    "description": "This workshop does not accept paper submissions. Please join us for invited talks and discussions on big model adaptation for computer vision."
+  },
+  "bestPaperAwards": "",
+  "faq": [
+    {
+      "question": "Does this workshop accept paper submissions?",
+      "answer": "No, this workshop does not accept paper submissions. The workshop features invited talks, a panel discussion, and an invite-only poster session."
+    },
+    {
+      "question": "How can I participate in the poster session?",
+      "answer": "The poster session is invite-only. Please contact the organizers if you are interested in presenting a poster."
+    }
+  ]
+}

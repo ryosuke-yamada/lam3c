@@ -1,0 +1,108 @@
+{
+  "title": "Past Events",
+  "subtitle": "Previous editions of the Machine Learning Workshop",
+  "workshopHistory": [
+    {
+      "year": "2024",
+      "title": "ML Workshop 2024",
+      "location": "CVPR 2024, Seattle, USA",
+      "description": "The 2024 edition focused on generative models and their applications in computer vision, featuring keynotes from leading researchers in the field.",
+      "website": "#"
+    },
+    {
+      "year": "2023",
+      "title": "ML Workshop 2023",
+      "location": "ICCV 2023, Paris, France",
+      "description": "The 2023 workshop explored self-supervised learning approaches and their impact on computer vision tasks, with a special focus on few-shot learning.",
+      "website": "#"
+    },
+    {
+      "year": "2022",
+      "title": "ML Workshop 2022",
+      "location": "CVPR 2022, New Orleans, USA",
+      "description": "The inaugural workshop in 2022 brought together researchers to discuss foundational machine learning techniques for computer vision applications.",
+      "website": "#"
+    }
+  ],
+  "pastPapers": [
+    {
+      "year": "2024",
+      "title": "Diffusion Models for High-Resolution Image Generation",
+      "authors": "A. Smith, B. Johnson, C. Williams",
+      "links": {
+        "paper": "#",
+        "video": "#"
+      }
+    },
+    {
+      "year": "2024",
+      "title": "Transformer Architectures for Multi-Modal Learning",
+      "authors": "D. Brown, E. Davis, F. Wilson",
+      "links": {
+        "paper": "#",
+        "video": "#"
+      }
+    },
+    {
+      "year": "2023",
+      "title": "Self-Supervised Learning for Visual Representation",
+      "authors": "G. Martinez, H. Lee, I. Kim",
+      "links": {
+        "paper": "#",
+        "video": "#"
+      }
+    },
+    {
+      "year": "2023",
+      "title": "Few-Shot Learning with Meta-Learning Approaches",
+      "authors": "J. Chen, K. Wang, L. Zhang",
+      "links": {
+        "paper": "#",
+        "video": "#"
+      }
+    },
+    {
+      "year": "2022",
+      "title": "Efficient Neural Networks for Mobile Devices",
+      "authors": "M. Patel, N. Singh, O. Thompson",
+      "links": {
+        "paper": "#",
+        "video": "#"
+      }
+    }
+  ],
+  "pastKeynotes": [
+    {
+      "title": "Advances in Generative Models",
+      "speaker": "Prof. Alice Johnson, 2024",
+      "description": "This keynote explored the latest advances in generative models, focusing on diffusion models and their applications in image and video generation.",
+      "videoLink": "#"
+    },
+    {
+      "title": "Self-Supervised Learning Revolution",
+      "speaker": "Dr. Robert Smith, 2023",
+      "description": "This keynote discussed how self-supervised learning approaches have revolutionized computer vision tasks, reducing the need for large labeled datasets.",
+      "videoLink": "#"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Workshop Datasets",
+      "description": "A collection of benchmark datasets used in previous workshop challenges, available for download and research purposes.",
+      "link": "#",
+      "type": "datasets"
+    },
+    {
+      "title": "Code Repositories",
+      "description": "GitHub repositories containing code implementations of selected papers from previous workshops.",
+      "link": "#",
+      "type": "code"
+    },
+    {
+      "title": "Presentation Slides",
+      "description": "A collection of presentation slides from keynote speakers and selected paper presentations at previous workshops.",
+      "link": "#",
+      "type": "slides"
+    }
+  ]
+}

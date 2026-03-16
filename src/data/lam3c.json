@@ -1,0 +1,81 @@
+{
+  "title": "LAM3C",
+  "subtitle": "3D sans 3D Scans: Scalable Pre-training from Video-Generated Point Clouds",
+  "venue": "CVPR 2026",
+  "authors": [
+    {
+      "name": "Ryousuke Yamada",
+      "affiliationIds": [1, 2],
+      "url": ""
+    },
+    {
+      "name": "Kohsuke Ide",
+      "affiliationIds": [1],
+      "url": ""
+    },
+    {
+      "name": "Yoshihiro Fukuhara",
+      "affiliationIds": [1, 2],
+      "url": ""
+    },
+    {
+      "name": "Hirokatsu Kataoka",
+      "affiliationIds": [1, 2],
+      "url": ""
+    },
+    {
+      "name": "Gilles Puy",
+      "affiliationIds": [3],
+      "url": ""
+    },
+    {
+      "name": "Andrei Bursuc",
+      "affiliationIds": [3],
+      "url": ""
+    },
+    {
+      "name": "Yuki M. Asano",
+      "affiliationIds": [4],
+      "url": ""
+    }
+  ],
+  "affiliations": [
+    { "id": 1, "name": "AIST" },
+    { "id": 2, "name": "cvpaper.challenge" },
+    { "id": 3, "name": "Valeo.ai" },
+    { "id": 4, "name": "University of Amsterdam" }
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2512.23042",
+    "github": "https://github.com/cvpaperchallenge/lam3c",
+    "huggingface": "https://huggingface.co/aist-cvrt/lam3c-roomtours"
+  },
+  "abstract": "The bottleneck of 3D self-supervised learning is not only algorithms, but also the scarcity of large-scale 3D data. By turning the vast sea of unlabeled internet videos into point clouds, we unlock a scalable source of 3D supervision. This paper shows that 3D self-supervised learning can be trained using only video-generated point clouds reconstructed from unlabeled videos, without relying on real 3D scans. We introduce RoomTours, a scalable pipeline that converts unlabeled indoor videos into video-generated point clouds, and LAM3C, a 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds. LAM3C transfers well to indoor semantic and instance segmentation tasks across ScanNet, ScanNet200, ScanNet++, and S3DIS benchmarks.",
+  "message": "The bottleneck of 3D self-supervised learning is not only algorithms, but also the scarcity of large-scale 3D data. By turning the vast sea of unlabeled internet videos into point clouds, we unlock a scalable source of 3D supervision.",
+  "tldr": "This paper shows that 3D self-supervised learning can be trained using only video-generated point clouds reconstructed from unlabeled videos, without relying on real 3D scans.",
+  "contributions": [
+    {
+      "name": "RoomTours",
+      "description": "A scalable pipeline that converts unlabeled indoor videos into video-generated point clouds."
+    },
+    {
+      "name": "LAM3C",
+      "description": "A 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds."
+    }
+  ],
+  "results": {
+    "description": "LAM3C with PTv3-Large backbone pretrained on RoomTours49k achieves strong results across multiple indoor 3D understanding benchmarks.",
+    "table": {
+      "headers": ["Model", "Backbone", "ScanNet LP", "ScanNet FT", "ScanNet200 LP", "ScanNet200 FT", "ScanNet++ LP", "ScanNet++ FT", "S3DIS LP", "S3DIS FT"],
+      "rows": [
+        ["LAM3C", "PTv3-Base", "66.0", "75.1", "25.3", "35.1", "34.2", "43.1", "65.7", "72.9"],
+        ["LAM3C", "PTv3-Large", "69.5", "79.5", "28.1", "35.5", "35.9", "43.1", "69.5", "75.5"]
+      ]
+    }
+  },
+  "bibtex": "@inproceedings{yamada2026lam3c,\n  title={3D sans 3D Scans: Scalable Pre-training from Video-Generated Point Clouds},\n  author={Ryousuke Yamada and Kohsuke Ide and Yoshihiro Fukuhara and Hirokatsu Kataoka and Gilles Puy and Andrei Bursuc and Yuki M. Asano},\n  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  year={2026}\n}",
+  "news": [
+    { "date": "Mar 2026", "content": "Released RoomTours generation code and inference demo visualization." },
+    { "date": "Feb 2026", "content": "LAM3C was accepted to CVPR 2026 (main track)." }
+  ]
+}

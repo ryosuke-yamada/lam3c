@@ -1,0 +1,121 @@
+{
+  "title": "Schedule",
+  "subtitle": "Workshop program",
+  "importantDates": [
+    {
+      "title": "Workshop Date",
+      "date": "June 2026 (TBD)",
+      "description": "Half-day workshop at CVPR 2026"
+    }
+  ],
+  "workshopProgram": {
+    "day1": {
+      "date": "June 2026 (TBD)",
+      "location": "Nashville, Tennessee",
+      "schedule": [
+        {
+          "time": "09:00 - 09:10",
+          "session": "Opening Remarks",
+          "presenter": "Yuki M. Asano",
+          "slides": ""
+        },
+        {
+          "time": "09:10 - 09:30",
+          "session": "Invited Talk 1",
+          "presenter": "Oriane Simeoni",
+          "slides": ""
+        },
+        {
+          "time": "09:30 - 09:50",
+          "session": "Invited Talk 2",
+          "presenter": "Christian Rupprecht",
+          "slides": ""
+        },
+        {
+          "time": "09:50 - 10:10",
+          "session": "Invited Talk 3",
+          "presenter": "Cordelia Schmid",
+          "slides": ""
+        },
+        {
+          "time": "10:10 - 10:20",
+          "session": "Short Break",
+          "presenter": "",
+          "slides": ""
+        },
+        {
+          "time": "10:20 - 10:40",
+          "session": "Invited Talk 4",
+          "presenter": "Saining Xie",
+          "slides": ""
+        },
+        {
+          "time": "10:40 - 11:00",
+          "session": "Invited Talk 5",
+          "presenter": "Yannis Kalantidis",
+          "slides": ""
+        },
+        {
+          "time": "11:00 - 11:20",
+          "session": "Invited Talk 6",
+          "presenter": "Lucas Beyer",
+          "slides": ""
+        },
+        {
+          "time": "11:20 - 11:30",
+          "session": "Short Break",
+          "presenter": "",
+          "slides": ""
+        },
+        {
+          "time": "11:30 - 12:15",
+          "session": "Panel Discussion (Speakers 1-6)",
+          "presenter": "",
+          "slides": ""
+        },
+        {
+          "time": "12:15 - 13:30",
+          "session": "Lunch Break / Poster Session (Invite-only)",
+          "presenter": "",
+          "slides": ""
+        }
+      ]
+    },
+    "day2": {
+      "date": "",
+      "location": "",
+      "schedule": []
+    }
+  },
+  "presenterGuidelines": {
+    "oralPresentation": {
+      "title": "Invited Talk Guidelines",
+      "content": "Each invited talk will be allocated 20 minutes including Q&A.",
+      "guidelines": [
+        "Prepare slides in 16:9 format",
+        "Upload your presentation at least 30 minutes before your session",
+        "Include your talk title, name, and affiliations on the first slide"
+      ]
+    },
+    "posterPresentation": {
+      "title": "Poster Presentation Guidelines",
+      "content": "Posters will be displayed during the lunch break poster session (invite-only).",
+      "guidelines": [
+        "Maximum poster size: 36\" x 48\" (91cm x 122cm)",
+        "Portrait orientation is recommended",
+        "Set up your poster 30 minutes before the session starts"
+      ]
+    },
+    "technicalRequirements": {
+      "title": "Technical Requirements",
+      "content": "The following equipment will be provided for oral presentations:",
+      "requirements": [
+        "Projector with HDMI connection",
+        "Presenter remote",
+        "Microphone",
+        "Laser pointer"
+      ],
+      "note": "Please bring your own laptop or a USB drive with your presentation."
+    }
+  }
+}
