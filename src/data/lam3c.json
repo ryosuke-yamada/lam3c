@@ -5,7 +5,7 @@
   "authors": [
     {
       "name": "Ryousuke Yamada",
-      "affiliationIds": [1,2],
+      "affiliationIds": [1, 2],
       "url": ""
     },
     {
@@ -60,21 +60,64 @@
     {
       "name": "LAM3C",
       "description": "A 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds."
+    },
+    {
+      "name": "Scaling Results",
+      "description": "A 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds."
     }
   ],
   "results": {
     "description": "LAM3C with PTv3-Large backbone pretrained on RoomTours49k achieves strong results across multiple indoor 3D understanding benchmarks.",
     "table": {
-      "headers": ["Model", "Backbone", "ScanNet LP", "ScanNet FT", "ScanNet200 LP", "ScanNet200 FT", "ScanNet++ LP", "ScanNet++ FT", "S3DIS LP", "S3DIS FT"],
+      "headers": [
+        "Model",
+        "Backbone",
+        "ScanNet LP",
+        "ScanNet FT",
+        "ScanNet200 LP",
+        "ScanNet200 FT",
+        "ScanNet++ LP",
+        "ScanNet++ FT",
+        "S3DIS LP",
+        "S3DIS FT"
+      ],
       "rows": [
-        ["LAM3C", "PTv3-Base", "66.0", "75.1", "25.3", "35.1", "34.2", "43.1", "65.7", "72.9"],
-        ["LAM3C", "PTv3-Large", "69.5", "79.5", "28.1", "35.5", "35.9", "43.1", "69.5", "75.5"]
+        [
+          "LAM3C",
+          "PTv3-Base",
+          "66.0",
+          "75.1",
+          "25.3",
+          "35.1",
+          "34.2",
+          "43.1",
+          "65.7",
+          "72.9"
+        ],
+        [
+          "LAM3C",
+          "PTv3-Large",
+          "69.5",
+          "79.5",
+          "28.1",
+          "35.5",
+          "35.9",
+          "43.1",
+          "69.5",
+          "75.5"
+        ]
       ]
     }
   },
   "bibtex": "@inproceedings{yamada2026lam3c,\n  title={3D sans 3D Scans: Scalable Pre-training from Video-Generated Point Clouds},\n  author={Ryousuke Yamada and Kohsuke Ide and Yoshihiro Fukuhara and Hirokatsu Kataoka and Gilles Puy and Andrei Bursuc and Yuki M. Asano},\n  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  year={2026}\n}",
   "news": [
-    { "date": "Mar 2026", "content": "Released RoomTours generation code and inference demo visualization." },
-    { "date": "Feb 2026", "content": "LAM3C was accepted to CVPR 2026 (main track)." }
+    {
+      "date": "Mar 2026",
+      "content": "Released RoomTours generation code and inference demo visualization."
+    },
+    {
+      "date": "Feb 2026",
+      "content": "LAM3C was accepted to CVPR 2026 (main track)."
+    }
   ]
 }

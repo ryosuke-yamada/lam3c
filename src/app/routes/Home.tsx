@@ -156,8 +156,8 @@ function Home() {
         {/* Teaser Image */}
         <div className="mx-auto max-w-3xl">
           <img
-            src="/lam3c_demo.png"
-            alt="LAM3C PCA visualization and similarity heatmap demo"
+            src="/lam3c_scaling.png"
+            alt="LAM3C scaling results showing performance improvement with more data"
             className="w-full rounded-xl border shadow-sm"
             loading="lazy"
           />
@@ -176,6 +176,7 @@ function Home() {
 
       {/* Key Message */}
       <section className="rounded-xl border bg-card p-8">
+        <p className="text-lg italic leading-relaxed mb-2">LAM3C Message</p>
         <blockquote className="space-y-4">
           <p className="text-lg italic leading-relaxed">
             &ldquo;{lam3cData.message}&rdquo;
@@ -188,7 +189,7 @@ function Home() {
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Key Contributions
         </h2>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           {lam3cData.contributions.map((c, i) => (
             <div key={i} className="rounded-xl border bg-card p-6 space-y-2">
               <h3 className="text-xl font-semibold">{c.name}</h3>
@@ -198,10 +199,25 @@ function Home() {
         </div>
       </section>
 
-      {/* Scaling Results */}
+      {/* RoomTours Gallery */}
       <section id="results" className="space-y-6">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Scaling Results
+          RoomTours Gallery
+        </h2>
+        <div className="mx-auto max-w-3xl">
+          <img
+            src="/lam3c_scaling.png"
+            alt="LAM3C scaling results showing performance improvement with more data"
+            className="w-full rounded-xl border shadow-sm"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      {/* LAM3C Pipeline */}
+      <section id="pipeline" className="space-y-6">
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          LAM3C Pipeline
         </h2>
         <div className="mx-auto max-w-3xl">
           <img
@@ -252,10 +268,10 @@ function Home() {
         </p>
       </section>
 
-      {/* RoomTours Pipeline */}
-      <section id="pipeline" className="space-y-6">
+      {/* Qualitative results */}
+      <section id="qualitative" className="space-y-6">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          RoomTours Pipeline
+          Qualitative results
         </h2>
         <p className="text-muted-foreground">
           RoomTours converts unlabeled indoor videos into training-ready point
@@ -269,21 +285,6 @@ function Home() {
             className="w-full rounded-xl border shadow-sm"
             loading="lazy"
           />
-        </div>
-      </section>
-
-      {/* News */}
-      <section id="news" className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">News</h2>
-        <div className="space-y-3">
-          {lam3cData.news.map((item, i) => (
-            <div key={i} className="flex gap-4">
-              <span className="shrink-0 font-medium text-muted-foreground w-24">
-                {item.date}
-              </span>
-              <span>{item.content}</span>
-            </div>
-          ))}
         </div>
       </section>
 
