@@ -1,5 +1,5 @@
-import { ExternalLink, Copy, Check } from "lucide-react";
-import { SiGithub } from "react-icons/si";
+import { FileText, Copy, Check, Database } from "lucide-react";
+import { SiGithub, SiHuggingface } from "react-icons/si";
 import { useLocation } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 
@@ -128,8 +128,8 @@ function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Paper (arXiv)
+              <FileText className="mr-2 h-4 w-4" />
+              Paper
             </a>
           </Button>
           <Button variant="outline" asChild>
@@ -148,8 +148,13 @@ function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Models (HuggingFace)
+              <SiHuggingface className="mr-2 h-4 w-4" />
+              Models
             </a>
+          </Button>
+          <Button variant="outline" disabled>
+            <Database className="mr-2 h-4 w-4" />
+            Dataset (TBA)
           </Button>
         </div>
 

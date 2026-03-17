@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import { SiGithub } from "react-icons/si";
-import { ExternalLink } from "lucide-react";
+import { SiGithub, SiHuggingface } from "react-icons/si";
+import { FileText, Database } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function Footer() {
@@ -14,7 +14,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="mr-2 h-4 w-4" />
+              <FileText className="mr-2 h-4 w-4" />
               arXiv
             </a>
           </Button>
@@ -34,8 +34,13 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
+              <SiHuggingface className="mr-2 h-4 w-4" />
               HuggingFace
             </a>
+          </Button>
+          <Button variant="ghost" size="sm" disabled>
+            <Database className="mr-2 h-4 w-4" />
+            Dataset (TBA)
           </Button>
         </div>
         <div className="flex flex-col items-center gap-2 text-center">
