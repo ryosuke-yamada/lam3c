@@ -22,7 +22,7 @@ const navItems = [
 export function Header() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border bg-header-background/70 backdrop-blur-md flex justify-center">
-      <div className="container flex h-16 items-center justify-between px-6 xl:w-4xl">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6 xl:max-w-4xl">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center">
             <span className="font-bold text-lg">LAM3C</span>

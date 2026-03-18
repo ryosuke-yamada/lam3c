@@ -141,6 +141,16 @@
   section[id] {
     scroll-margin-top: 5rem;
   }
+  /* Prevent horizontal overflow on mobile */
+  html,
+  body {
+    @apply max-w-full overflow-x-hidden;
+  }
+  img,
+  video,
+  iframe {
+    @apply max-w-full h-auto;
+  }
 }
 
 /* Sage-teal palette: between olive-gold and teal from LAM3C logo */

@@ -78,14 +78,13 @@ function Home() {
   }, [location.hash]);
 
   return (
-    <main className="container px-6 py-8 space-y-20 xl:w-4xl">
+    <main className="container mx-auto px-6 py-8 space-y-20 xl:max-w-4xl">
       {/* Hero Section */}
       <section
-        className="relative text-center flex flex-col rounded-3xl overflow-hidden -mx-6 max-w-none"
+        className="relative text-center flex flex-col rounded-xl sm:rounded-3xl overflow-hidden w-full"
         style={{
           aspectRatio: "1536 / 1024",
-          minHeight: "600px",
-          width: "calc(100% + 3rem)",
+          minHeight: "min(400px, 50vh)",
         }}
       >
         {/* Background Image for Hero - Full height with no opacity */}
@@ -93,7 +92,7 @@ function Home() {
           className="absolute inset-0"
           style={{
             backgroundImage: "url(/lam3c_background.jpg)",
-            backgroundSize: "100% 100%",
+            backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             pointerEvents: "none",

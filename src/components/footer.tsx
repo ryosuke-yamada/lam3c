@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 export function Footer() {
   return (
     <footer className="w-full border-t bg-footer-background/70 py-6 md:py-10 flex flex-col items-center">
-      <div className="container flex flex-col items-center gap-6 px-6 xl:w-4xl">
+      <div className="container mx-auto flex flex-col items-center gap-6 px-6 xl:max-w-4xl">
         <div className="flex flex-wrap justify-center gap-3">
           <Button variant="ghost" size="sm" asChild>
             <a
