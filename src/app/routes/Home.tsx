@@ -80,102 +80,139 @@ function Home() {
   return (
     <main className="container px-6 py-8 space-y-20 xl:w-4xl">
       {/* Hero Section */}
-      <section className="text-center space-y-8 pt-8">
-        <div className="inline-block rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
-          {lam3cData.venue}
-        </div>
-        <div className="space-y-6">
-          <img
-            src="/logo.png"
-            alt="LAM3C"
-            className="mx-auto h-32 w-auto sm:h-44 md:h-56"
-          />
-          <p className="text-xl text-muted-foreground sm:text-2xl md:text-3xl tracking-tight">
-            {lam3cData.subtitle}
-          </p>
-        </div>
-
-        {/* Authors */}
-        <div className="space-y-3">
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-base">
-            {lam3cData.authors.map((author, i) => (
-              <span key={i} className="whitespace-nowrap">
-                {author.url ? (
-                  <a
-                    href={author.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-primary"
-                  >
-                    {author.name}
-                  </a>
-                ) : (
-                  author.name
-                )}
-                <sup className="text-xs text-muted-foreground ml-0.5">
-                  {author.affiliationIds.join(",")}
-                </sup>
-              </span>
-            ))}
+      <section
+        className="relative text-center flex flex-col"
+        style={{ aspectRatio: "1536 / 1024" }}
+      >
+        {/* Background Image for Hero - Full height with no opacity */}
+        <div
+          className="absolute inset-0 -mx-6 rounded-3xl overflow-hidden"
+          style={{
+            backgroundImage: "url(/lam3c_background.jpg)",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            pointerEvents: "none",
+          }}
+        />
+        {/* Opacity overlay - only bottom 1/3 */}
+        <div
+          className="absolute inset-0 -mx-6 rounded-3xl overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 66.67%, rgba(0, 0, 0, 0.7) 100%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 flex flex-col h-full">
+          {/* Venue - stays at top */}
+          <div className="pt-8">
+            <div className="inline-block rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
+              {lam3cData.venue}
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            {lam3cData.affiliations.map((aff) => (
-              <span key={aff.id}>
-                <sup className="mr-0.5">{aff.id}</sup>
-                {aff.name}
-              </span>
-            ))}
-          </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="outline" asChild>
-            <a
-              href={lam3cData.links.arxiv}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Paper
-            </a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a
-              href={lam3cData.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SiGithub className="mr-2 h-4 w-4" />
-              Code
-            </a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a
-              href={lam3cData.links.huggingface}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SiHuggingface className="mr-2 h-4 w-4" />
-              Models
-            </a>
-          </Button>
-          <Button variant="outline" disabled>
-            <Database className="mr-2 h-4 w-4" />
-            Dataset (TBA)
-          </Button>
-        </div>
-
-        {/* Teaser Image */}
-        <div className="mx-auto max-w-3xl">
-          <img
-            src="/lam3c_scaling.png"
-            alt="LAM3C scaling results showing performance improvement with more data"
-            className="w-full rounded-xl border shadow-sm"
-            loading="lazy"
+          {/* Spacer to push subtitle to around 55% */}
+          <div
+            className="flex-grow"
+            style={{ minHeight: "calc(55% - 3rem)" }}
           />
+
+          {/* Subtitle - starts at bottom 1/3 */}
+          <div className="space-y-3 pb-8">
+            {/* <img
+              src="/logo.png"
+              alt="LAM3C"
+              className="mx-auto h-32 w-auto sm:h-44 md:h-56"
+            /> */}
+            {/* Subtitle */}
+            <p className="text-xl text-white sm:text-2xl md:text-3xl tracking-tight font-semibold">
+              {lam3cData.subtitle}
+            </p>
+
+            {/* Authors */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-base text-white">
+                {lam3cData.authors.map((author, i) => (
+                  <span key={i} className="whitespace-nowrap">
+                    {author.url ? (
+                      <a
+                        href={author.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary"
+                      >
+                        {author.name}
+                      </a>
+                    ) : (
+                      author.name
+                    )}
+                    <sup className="text-xs text-gray-300 ml-0.5">
+                      {author.affiliationIds.join(",")}
+                    </sup>
+                  </span>
+                ))}
+              </div>
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-gray-300">
+                {lam3cData.affiliations.map((aff) => (
+                  <span key={aff.id}>
+                    <sup className="mr-0.5">{aff.id}</sup>
+                    {aff.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button variant="outline" asChild>
+                <a
+                  href={lam3cData.links.arxiv}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Paper
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href={lam3cData.links.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SiGithub className="mr-2 h-4 w-4" />
+                  Code
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href={lam3cData.links.huggingface}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SiHuggingface className="mr-2 h-4 w-4" />
+                  Models
+                </a>
+              </Button>
+              <Button variant="outline" disabled>
+                <Database className="mr-2 h-4 w-4" />
+                Dataset (TBA)
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Teaser Image */}
+      <div className="mx-auto max-w-3xl">
+        <img
+          src="/lam3c_scaling.png"
+          alt="LAM3C scaling results showing performance improvement with more data"
+          className="w-full rounded-xl border shadow-sm"
+          loading="lazy"
+        />
+      </div>
 
       {/* Abstract */}
       <section id="abstract" className="space-y-4">
