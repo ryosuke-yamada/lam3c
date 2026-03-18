@@ -55,15 +55,15 @@
   "contributions": [
     {
       "name": "RoomTours",
-      "description": "A scalable pipeline that converts unlabeled indoor videos into video-generated point clouds."
+      "description": "A large-scale dataset of 49,219 scenes generated from unlabeled room-walkthrough videos using off-the-shelf reconstruction, enabling scalable 3D learning without traditional sensors."
     },
     {
       "name": "LAM3C",
-      "description": "A 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds."
+      "description": "A noise-regularized self-supervised learning framework with Laplacian smoothing and student-teacher distillation that learns robust 3D representations from noisy video-generated point clouds."
     },
     {
       "name": "Scaling Results",
-      "description": "A 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds."
+      "description": "Superior performance on indoor semantic and instance segmentation tasks across ScanNet, ScanNet200, ScanNet++, and S3DIS benchmarks—all without using any real 3D scans."
     }
   ],
   "results": {

@@ -1,4 +1,12 @@
-import { FileText, Copy, Check, Database } from "lucide-react";
+import {
+  FileText,
+  Copy,
+  Check,
+  Database,
+  Video,
+  Network,
+  TrendingUp,
+} from "lucide-react";
 import { SiGithub, SiHuggingface } from "react-icons/si";
 import { useLocation } from "react-router";
 import { useEffect, useState, useCallback } from "react";
@@ -195,12 +203,23 @@ function Home() {
           Key Contributions
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
-          {lam3cData.contributions.map((c, i) => (
-            <div key={i} className="rounded-xl border bg-card p-6 space-y-2">
-              <h3 className="text-xl font-semibold">{c.name}</h3>
-              <p className="text-muted-foreground">{c.description}</p>
-            </div>
-          ))}
+          {lam3cData.contributions.map((c, i) => {
+            const icons = [Video, Network, TrendingUp];
+            const Icon = icons[i];
+            return (
+              <div key={i} className="rounded-xl border bg-card p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2.5">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{c.name}</h3>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {c.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
