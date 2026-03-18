@@ -81,12 +81,16 @@ function Home() {
     <main className="container px-6 py-8 space-y-20 xl:w-4xl">
       {/* Hero Section */}
       <section
-        className="relative text-center flex flex-col"
-        style={{ aspectRatio: "1536 / 1024" }}
+        className="relative text-center flex flex-col rounded-3xl overflow-hidden -mx-6 max-w-none"
+        style={{
+          aspectRatio: "1536 / 1024",
+          minHeight: "600px",
+          width: "calc(100% + 3rem)",
+        }}
       >
         {/* Background Image for Hero - Full height with no opacity */}
         <div
-          className="absolute inset-0 -mx-6 rounded-3xl overflow-hidden"
+          className="absolute inset-0"
           style={{
             backgroundImage: "url(/lam3c_background.jpg)",
             backgroundSize: "100% 100%",
@@ -95,44 +99,38 @@ function Home() {
             pointerEvents: "none",
           }}
         />
-        {/* Opacity overlay - only bottom 1/3 */}
+        {/* Opacity overlay - bottom half with gradient */}
         <div
-          className="absolute inset-0 -mx-6 rounded-3xl overflow-hidden"
+          className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, transparent 66.67%, rgba(0, 0, 0, 0.7) 100%)",
+              "linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.8) 100%)",
             pointerEvents: "none",
           }}
         />
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-10 flex flex-col h-full justify-between py-6 sm:py-8">
           {/* Venue - stays at top */}
-          <div className="pt-8">
+          <div className="flex-shrink-0">
             <div className="inline-block rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
               {lam3cData.venue}
             </div>
           </div>
 
-          {/* Spacer to push subtitle to around 55% */}
-          <div
-            className="flex-grow"
-            style={{ minHeight: "calc(55% - 3rem)" }}
-          />
-
-          {/* Subtitle - starts at bottom 1/3 */}
-          <div className="space-y-3 pb-8">
+          {/* Subtitle and content - centered and pushed to bottom half */}
+          <div className="space-y-3 flex-shrink-0 mt-auto">
             {/* <img
               src="/logo.png"
               alt="LAM3C"
               className="mx-auto h-32 w-auto sm:h-44 md:h-56"
             /> */}
             {/* Subtitle */}
-            <p className="text-xl text-white sm:text-2xl md:text-3xl tracking-tight font-semibold">
+            <p className="text-lg text-white sm:text-xl md:text-2xl lg:text-3xl tracking-tight font-semibold px-4">
               {lam3cData.subtitle}
             </p>
 
             {/* Authors */}
-            <div className="space-y-3">
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-base text-white">
+            <div className="space-y-2">
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm sm:text-base text-white px-2">
                 {lam3cData.authors.map((author, i) => (
                   <span key={i} className="whitespace-nowrap">
                     {author.url ? (
@@ -153,7 +151,7 @@ function Home() {
                   </span>
                 ))}
               </div>
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-gray-300">
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-300 px-2">
                 {lam3cData.affiliations.map((aff) => (
                   <span key={aff.id}>
                     <sup className="mr-0.5">{aff.id}</sup>
@@ -164,7 +162,7 @@ function Home() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 px-2">
               <Button variant="outline" asChild>
                 <a
                   href={lam3cData.links.arxiv}
