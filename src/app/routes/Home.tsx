@@ -109,9 +109,28 @@ function Home() {
         />
         <div className="relative z-10 flex flex-col h-full justify-between py-6 sm:py-8">
           {/* Venue - stays at top */}
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <div className="inline-block rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
               {lam3cData.venue}
+            </div>
+          </div> */}
+          <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center gap-10">
+            <div className="flex flex-col items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-muted-foreground">
+              <span className="text-white">accepted at</span>
+              <div className="flex flex-wrap items-center justify-center gap-4 rounded-full border bg-background/90 px-6 py-3 shadow-sm backdrop-blur">
+                <div className="flex items-center gap-3 pl-4 pr-4">
+                  <img
+                    src="/cvpr-logo-black.png"
+                    alt="CVPR 2026 logo"
+                    className="h-10 dark:hidden"
+                  />
+                  <img
+                    src="/cvpr-logo-white.png"
+                    alt="CVPR 2026 logo"
+                    className="hidden h-10 dark:block"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
