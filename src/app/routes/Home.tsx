@@ -224,13 +224,106 @@ function Home() {
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           LAM3C Pipeline
         </h2>
-        <div className="mx-auto max-w-3xl">
-          <img
-            src="/lam3c_scaling.png"
-            alt="LAM3C scaling results showing performance improvement with more data"
-            className="w-full rounded-xl border shadow-sm"
-            loading="lazy"
-          />
+        <p className="text-muted-foreground">
+          LAM3C employs a noise-regularized self-supervised learning framework
+          that learns robust 3D representations from noisy video-generated point
+          clouds through Laplacian smoothing and student-teacher distillation.
+        </p>
+
+        {/* Embedding Stability with Laplacian Smoothing */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">
+            Embedding Stability with Laplacian Smoothing
+          </h3>
+          <div className="mx-auto max-w-3xl">
+            <img
+              src="/lam3c_fig2.jpg"
+              alt="LAM3C embedding stability through Laplacian smoothing"
+              className="w-full rounded-xl border shadow-sm"
+              loading="lazy"
+            />
+          </div>
+          <div className="space-y-3 text-muted-foreground">
+            <p>
+              <strong className="text-foreground">
+                Laplacian Smoothing Loss (ℒ<sub>smooth</sub>):
+              </strong>{" "}
+              Video-generated point clouds contain inherent reconstruction noise
+              that can destabilize representation learning. To address this, we
+              introduce a Laplacian smoothing regularization that enforces local
+              geometric consistency in the embedding space. This loss ensures
+              that neighboring points in the k-NN graph have similar embeddings,
+              making the learned representations robust to point-level noise
+              while preserving semantic structure.
+            </p>
+            <p>
+              The smoothing loss operates by constructing a k-nearest neighbor
+              graph from the noisy input and penalizing large embedding
+              differences between connected points. This encourages the encoder
+              to learn stable features that capture geometric structure rather
+              than fitting to noise artifacts. The arrow width in the
+              visualization indicates attraction strength, where thicker arrows
+              represent stronger geometric consistency constraints between
+              neighboring points.
+            </p>
+          </div>
+        </div>
+
+        {/* Student-Teacher Framework */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">
+            Student-Teacher Knowledge Distillation
+          </h3>
+          <div className="mx-auto max-w-3xl">
+            <img
+              src="/lam3c_fig3.jpg"
+              alt="LAM3C student-teacher framework with masked learning"
+              className="w-full rounded-xl border shadow-sm"
+              loading="lazy"
+            />
+          </div>
+          <div className="space-y-3 text-muted-foreground">
+            <p>
+              <strong className="text-foreground">
+                Consistency Loss (ℒ<sub>consist</sub>):
+              </strong>{" "}
+              LAM3C employs a student-teacher framework where the student
+              network learns from both masked reconstruction and consistency
+              with the teacher&apos;s predictions. The student receives masked
+              point cloud patches from global views, while the teacher processes
+              the complete scene with noise augmentation. This asymmetric
+              learning setup encourages the student to develop robust
+              representations that generalize across different noise conditions
+              and missing regions.
+            </p>
+            <p>
+              <strong className="text-foreground">
+                Distillation Loss (ℒ<sub>distill</sub>):
+              </strong>{" "}
+              The teacher network, updated via exponential moving average (EMA)
+              of the student weights, provides stable learning targets. The
+              distillation loss minimizes the divergence between student and
+              teacher embeddings, ensuring that the learned representations
+              remain consistent despite input perturbations. The &quot;Pull
+              together&quot; mechanism shown in the figure illustrates how
+              embeddings from the masked student view and augmented teacher view
+              are aligned in the feature space, promoting view-invariant feature
+              learning.
+            </p>
+            <p>
+              <strong className="text-foreground">
+                Combined Training Objective:
+              </strong>{" "}
+              The overall LAM3C loss combines these components: ℒ = ℒ
+              <sub>smooth</sub> + λ<sub>c</sub>ℒ<sub>consist</sub> + λ
+              <sub>d</sub>ℒ<sub>distill</sub>, where the smoothing term handles
+              point-level noise, while the consistency and distillation terms
+              enable robust learning from incomplete and noisy observations.
+              This multi-faceted approach allows LAM3C to effectively pre-train
+              on large-scale video-generated point clouds without requiring
+              clean 3D scans.
+            </p>
+          </div>
         </div>
       </section>
 
