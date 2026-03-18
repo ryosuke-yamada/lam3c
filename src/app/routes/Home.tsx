@@ -385,24 +385,37 @@ function Home() {
         </p>
       </section>
 
-      {/* Qualitative results */}
+      {/* Qualitative Results */}
       <section id="qualitative" className="space-y-6">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Qualitative results
+          Qualitative Results
         </h2>
-        <p className="text-muted-foreground">
-          RoomTours converts unlabeled indoor videos into training-ready point
-          clouds for LAM3C pre-training. The pipeline includes video download,
-          scene segmentation, Pi3 reconstruction, and point-cloud preprocessing.
-        </p>
         <div className="mx-auto max-w-3xl">
           <img
-            src="/roomtours.png"
-            alt="RoomTours pipeline overview: from internet videos to 3D point clouds"
+            src="/lam3c_demo.png"
+            alt="Zero-shot semantic visualization comparison between Sonata and LAM3C"
             className="w-full rounded-xl border shadow-sm"
             loading="lazy"
           />
         </div>
+        <p className="text-muted-foreground leading-relaxed">
+          The figure above demonstrates LAM3C&apos;s learned representations
+          through PCA-based visualization, comparing results with Sonata
+          (trained on real 3D scans) and LAM3C (trained on video-generated
+          RoomTours data). Without any task-specific fine-tuning, LAM3C shows
+          clear segmentation of local structures such as desks, chairs, and
+          walls, indicating that the model successfully learns meaningful
+          geometric representations directly from noisy video-reconstructed
+          point clouds. While LAM3C demonstrates strong local structure
+          understanding comparable to models trained on clean 3D scans, the
+          visualization reveals slightly less coherent global structure. This
+          trade-off stems from the inherent characteristics of video-generated
+          point clouds, where variations in coordinate frames and scale make
+          learning globally consistent scene geometry more challenging.
+          Nevertheless, LAM3C successfully demonstrates that large-scale
+          pre-training on video-generated data can produce robust 3D
+          representations without requiring expensive 3D scanning equipment.
+        </p>
       </section>
 
       {/* Citation */}
