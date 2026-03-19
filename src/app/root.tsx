@@ -12,7 +12,7 @@ import { buildMeta } from "@/lib/seo";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => {
-  const base = import.meta.env.BASE_URL || '/';
+  const base = import.meta.env.BASE_URL || "/";
   return [
     { rel: "icon", href: `${base}favicon.ico` },
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
