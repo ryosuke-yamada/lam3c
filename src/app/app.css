@@ -62,8 +62,8 @@
   --secondary-foreground: var(--blue-11); /* oklch(0.205 0 0); */
   --muted: var(--blue-2); /* oklch(0.97 0 0); */
   --muted-foreground: var(--gray-10); /* oklch(0.556 0 0); */
-  --accent: oklch(0.75 0.12 200); /* Cyan accent inspired by LAM3C glow */
-  --accent-foreground: oklch(0.2 0.02 200);
+  --accent: oklch(0.88 0.05 60); /* Warm amber accent matching color scheme */
+  --accent-foreground: oklch(0.3 0.05 60);
   --destructive: oklch(0.577 0.245 27.325);
   --border: var(--blue-5); /* oklch(0.922 0 0); */
   --input: var(--blue-7); /* oklch(0.922 0 0); */
@@ -103,8 +103,8 @@
   --secondary-foreground: var(--blue-11); /* oklch(0.985 0 0); */
   --muted: var(--blue-2); /* oklch(0.269 0 0); */
   --muted-foreground: var(--gray-10); /* oklch(0.708 0 0); */
-  --accent: oklch(0.55 0.15 200); /* Cyan accent inspired by LAM3C glow */
-  --accent-foreground: oklch(0.95 0.05 200);
+  --accent: oklch(0.35 0.08 60); /* Warm amber accent matching color scheme */
+  --accent-foreground: oklch(0.88 0.05 60);
   --destructive: oklch(0.704 0.191 22.216);
   --border: var(--blue-5); /* oklch(1 0 0 / 10%); */
   --input: var(--blue-7); /* oklch(1 0 0 / 15%); */
