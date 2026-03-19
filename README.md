@@ -1,1 +1,1 @@
-# BigMAC
+# LAM3C Webpage
