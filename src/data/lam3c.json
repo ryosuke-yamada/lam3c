@@ -263,20 +263,6 @@
           "scanNetppFullFT": "21.1",
           "s3disLP": "27.8",
           "s3disFullFT": "47.2"
-        },
-        {
-          "method": "LAM3C* (ours)",
-          "pretrainReal": "15k",
-          "pretrainSynth": "-",
-          "vgpc": "49k",
-          "scanNetLP": "30.9",
-          "scanNetFullFT": "40.6",
-          "scanNet200LP": "10.8",
-          "scanNet200FullFT": "21.3",
-          "scanNetppLP": "12.7",
-          "scanNetppFullFT": "23.3",
-          "s3disLP": "27.2",
-          "s3disFullFT": "46.8"
         }
       ]
     }

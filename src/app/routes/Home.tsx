@@ -243,16 +243,6 @@ function Home() {
         />
       </div>
 
-      {/* Abstract */}
-      <section id="abstract" className="space-y-4">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Abstract
-        </h2>
-        <p className="leading-relaxed text-muted-foreground">
-          {lam3cData.abstract}
-        </p>
-      </section>
-
       {/* Key Message */}
       <section className="rounded-xl border bg-card p-8">
         <p className="text-lg italic leading-relaxed mb-2">LAM3C Message</p>
@@ -261,6 +251,16 @@ function Home() {
             &ldquo;{lam3cData.message}&rdquo;
           </p>
         </blockquote>
+      </section>
+
+      {/* Abstract */}
+      <section id="abstract" className="space-y-4">
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          Abstract
+        </h2>
+        <p className="leading-relaxed text-muted-foreground">
+          {lam3cData.abstract}
+        </p>
       </section>
 
       {/* Contributions */}
