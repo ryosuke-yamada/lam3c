@@ -55,6 +55,14 @@ jobs:
         run: docker compose down
         working-directory: ${{ env.DOCKER_COMPOSE_DIRECTORY }}
 
+      - name: Debug - List build output
+        run: |
+          echo "=== Listing build directory ==="
+          ls -laR build/ || echo "build directory not found"
+          echo ""
+          echo "=== Checking for index.html ==="
+          find . -name "index.html" -type f || echo "No index.html found"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
