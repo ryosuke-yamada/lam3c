@@ -415,38 +415,144 @@ function Home() {
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Benchmark Results
         </h2>
-        <p className="text-muted-foreground">{lam3cData.results.description}</p>
-        <ScrollArea className="w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {lam3cData.results.table.headers.map((h, i) => (
-                  <TableHead key={i} className={i > 1 ? "text-center" : ""}>
-                    {h}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {lam3cData.results.table.rows.map((row, i) => (
-                <TableRow key={i}>
-                  {row.map((cell, j) => (
-                    <TableCell
-                      key={j}
-                      className={j > 1 ? "text-center" : "font-medium"}
-                    >
-                      {cell}
-                    </TableCell>
+
+        {/* Semantic Segmentation Results */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Semantic Segmentation</h3>
+          <p className="text-muted-foreground">
+            {lam3cData.results.description}
+          </p>
+          <ScrollArea className="w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {lam3cData.results.table.headers.map((h, i) => (
+                    <TableHead key={i} className={i > 1 ? "text-center" : ""}>
+                      {h}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-        <p className="text-sm text-muted-foreground">
-          LP = Linear Probing, FT = Full Fine-tuning. All numbers are mIoU (%).
-        </p>
+              </TableHeader>
+              <TableBody>
+                {lam3cData.results.table.rows.map((row, i) => (
+                  <TableRow key={i}>
+                    {row.map((cell, j) => (
+                      <TableCell
+                        key={j}
+                        className={j > 1 ? "text-center" : "font-medium"}
+                      >
+                        {cell}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          <p className="text-sm text-muted-foreground">
+            LP = Linear Probing, FT = Full Fine-tuning. All numbers are mIoU
+            (%).
+          </p>
+        </div>
+
+        {/* Instance Segmentation Results */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Instance Segmentation</h3>
+          <p className="text-muted-foreground">
+            {lam3cData.instanceSegResults.description}
+          </p>
+          <ScrollArea className="w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead rowSpan={2} className="border-r">
+                    Instance Seg.
+                  </TableHead>
+                  <TableHead colSpan={3} className="text-center border-r">
+                    Pretraining Data
+                  </TableHead>
+                  <TableHead colSpan={2} className="text-center border-r">
+                    ScanNet
+                  </TableHead>
+                  <TableHead colSpan={2} className="text-center border-r">
+                    ScanNet200
+                  </TableHead>
+                  <TableHead colSpan={2} className="text-center border-r">
+                    ScanNet++ Val
+                  </TableHead>
+                  <TableHead colSpan={2} className="text-center">
+                    S3DIS Area 5
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="text-center">Real</TableHead>
+                  <TableHead className="text-center">Synth</TableHead>
+                  <TableHead className="text-center border-r">VGPC</TableHead>
+                  <TableHead className="text-center">LP</TableHead>
+                  <TableHead className="text-center border-r">
+                    Full-FT
+                  </TableHead>
+                  <TableHead className="text-center">LP</TableHead>
+                  <TableHead className="text-center border-r">
+                    Full-FT
+                  </TableHead>
+                  <TableHead className="text-center">LP</TableHead>
+                  <TableHead className="text-center border-r">
+                    Full-FT
+                  </TableHead>
+                  <TableHead className="text-center">LP</TableHead>
+                  <TableHead className="text-center">Full-FT</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {lam3cData.instanceSegResults.table.rows.map((row, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium border-r">
+                      {row.method}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {row.pretrainReal}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {row.pretrainSynth}
+                    </TableCell>
+                    <TableCell className="text-center border-r">
+                      {row.vgpc}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {row.scanNetLP}
+                    </TableCell>
+                    <TableCell className="text-center border-r">
+                      {row.scanNetFullFT}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {row.scanNet200LP}
+                    </TableCell>
+                    <TableCell className="text-center border-r">
+                      {row.scanNet200FullFT}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {row.scanNetppLP}
+                    </TableCell>
+                    <TableCell className="text-center border-r">
+                      {row.scanNetppFullFT}
+                    </TableCell>
+                    <TableCell className="text-center">{row.s3disLP}</TableCell>
+                    <TableCell className="text-center">
+                      {row.s3disFullFT}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          <p className="text-sm text-muted-foreground">
+            LP = Linear Probing, Full-FT = Full Fine-tuning. All numbers are
+            mIoU (%).
+          </p>
+        </div>
       </section>
 
       {/* Qualitative Results */}

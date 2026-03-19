@@ -114,6 +114,173 @@
       ]
     }
   },
+  "instanceSegResults": {
+    "description": "Instance segmentation results comparing LAM3C with baseline methods across multiple benchmarks.",
+    "table": {
+      "headers": [
+        { "name": "Instance Seg.", "colSpan": 1 },
+        {
+          "name": "Pretraining Data",
+          "colSpan": 3,
+          "subHeaders": ["Real", "Synth", "VGPC"]
+        },
+        { "name": "ScanNet", "colSpan": 2, "subHeaders": ["LP", "Full-FT"] },
+        { "name": "ScanNet200", "colSpan": 2, "subHeaders": ["LP", "Full-FT"] },
+        {
+          "name": "ScanNet++ Val",
+          "colSpan": 2,
+          "subHeaders": ["LP", "Full-FT"]
+        },
+        {
+          "name": "S3DIS Area 5",
+          "colSpan": 2,
+          "subHeaders": ["LP", "Full-FT"]
+        }
+      ],
+      "rows": [
+        {
+          "method": "PTv3",
+          "pretrainReal": "-",
+          "pretrainSynth": "-",
+          "vgpc": "-",
+          "scanNetLP": "0.2",
+          "scanNetFullFT": "26.9",
+          "scanNet200LP": "0.02",
+          "scanNet200FullFT": "17.2",
+          "scanNetppLP": "0.03",
+          "scanNetppFullFT": "18.5",
+          "s3disLP": "11.9",
+          "s3disFullFT": "39.6"
+        },
+        {
+          "method": "MSC",
+          "pretrainReal": "7k",
+          "pretrainSynth": "-",
+          "vgpc": "-",
+          "scanNetLP": "-",
+          "scanNetFullFT": "41.1",
+          "scanNet200LP": "-",
+          "scanNet200FullFT": "23.4",
+          "scanNetppLP": "-",
+          "scanNetppFullFT": "21.7",
+          "s3disLP": "-",
+          "s3disFullFT": "38.1"
+        },
+        {
+          "method": "PPT (sup.)",
+          "pretrainReal": "1k",
+          "pretrainSynth": "21k",
+          "vgpc": "-",
+          "scanNetLP": "-",
+          "scanNetFullFT": "42.1",
+          "scanNet200LP": "-",
+          "scanNet200FullFT": "24.0",
+          "scanNetppLP": "-",
+          "scanNetppFullFT": "21.9",
+          "s3disLP": "-",
+          "s3disFullFT": "39.7"
+        },
+        {
+          "method": "Sonata",
+          "pretrainReal": "18k",
+          "pretrainSynth": "121k",
+          "vgpc": "-",
+          "scanNetLP": "-",
+          "scanNetFullFT": "42.4",
+          "scanNet200LP": "-",
+          "scanNet200FullFT": "25.4",
+          "scanNetppLP": "-",
+          "scanNetppFullFT": "22.3",
+          "s3disLP": "-",
+          "s3disFullFT": "45.5"
+        },
+        {
+          "method": "Sonata (all real)",
+          "pretrainReal": "15k",
+          "pretrainSynth": "-",
+          "vgpc": "-",
+          "scanNetLP": "28.0",
+          "scanNetFullFT": "40.3",
+          "scanNet200LP": "9.7",
+          "scanNet200FullFT": "20.8",
+          "scanNetppLP": "10.0",
+          "scanNetppFullFT": "19.7",
+          "s3disLP": "22.9",
+          "s3disFullFT": "41.5"
+        },
+        {
+          "method": "Sonata (ScanNet)",
+          "pretrainReal": "1k",
+          "pretrainSynth": "-",
+          "vgpc": "-",
+          "scanNetLP": "23.9",
+          "scanNetFullFT": "29.8",
+          "scanNet200LP": "8.6",
+          "scanNet200FullFT": "19.7",
+          "scanNetppLP": "9.7",
+          "scanNetppFullFT": "18.7",
+          "s3disLP": "19.5",
+          "s3disFullFT": "40.8"
+        },
+        {
+          "method": "LAM3C (ours)",
+          "pretrainReal": "-",
+          "pretrainSynth": "-",
+          "vgpc": "16k",
+          "scanNetLP": "19.1",
+          "scanNetFullFT": "38.9",
+          "scanNet200LP": "5.8",
+          "scanNet200FullFT": "18.7",
+          "scanNetppLP": "9.5",
+          "scanNetppFullFT": "19.7",
+          "s3disLP": "18.0",
+          "s3disFullFT": "43.3"
+        },
+        {
+          "method": "LAM3C (ours)",
+          "pretrainReal": "-",
+          "pretrainSynth": "-",
+          "vgpc": "49k",
+          "scanNetLP": "25.1",
+          "scanNetFullFT": "39.7",
+          "scanNet200LP": "8.3",
+          "scanNet200FullFT": "19.6",
+          "scanNetppLP": "11.3",
+          "scanNetppFullFT": "20.5",
+          "s3disLP": "21.6",
+          "s3disFullFT": "45.7"
+        },
+        {
+          "method": "LAM3C* (ours)",
+          "pretrainReal": "-",
+          "pretrainSynth": "-",
+          "vgpc": "49k",
+          "scanNetLP": "28.6",
+          "scanNetFullFT": "41.7",
+          "scanNet200LP": "9.5",
+          "scanNet200FullFT": "21.9",
+          "scanNetppLP": "12.1",
+          "scanNetppFullFT": "21.1",
+          "s3disLP": "27.8",
+          "s3disFullFT": "47.2"
+        },
+        {
+          "method": "LAM3C* (ours)",
+          "pretrainReal": "15k",
+          "pretrainSynth": "-",
+          "vgpc": "49k",
+          "scanNetLP": "30.9",
+          "scanNetFullFT": "40.6",
+          "scanNet200LP": "10.8",
+          "scanNet200FullFT": "21.3",
+          "scanNetppLP": "12.7",
+          "scanNetppFullFT": "23.3",
+          "s3disLP": "27.2",
+          "s3disFullFT": "46.8"
+        }
+      ]
+    }
+  },
   "bibtex": "@inproceedings{yamada2026lam3c,\n  title={3D sans 3D Scans: Scalable Pre-training from Video-Generated Point Clouds},\n  author={Ryousuke Yamada and Kohsuke Ide and Yoshihiro Fukuhara and Hirokatsu Kataoka and Gilles Puy and Andrei Bursuc and Yuki M. Asano},\n  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  year={2026}\n}",
   "news": [
     {
