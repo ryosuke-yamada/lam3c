@@ -1,7 +1,7 @@
 import type { MetaDescriptor } from "react-router";
 
 const SITE_URL = "https://cvpaperchallenge.github.io/lam3c";
-const DEFAULT_IMAGE = `${SITE_URL}/lam3c_demo.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/lam3c_ogp.jpg`;
 const DEFAULT_IMAGE_ALT =
   "LAM3C: PCA visualization and similarity heatmap of 3D point cloud features";
 const SITE_NAME =
