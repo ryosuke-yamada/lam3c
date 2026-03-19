@@ -62,6 +62,9 @@ jobs:
           echo ""
           echo "=== Checking for index.html ==="
           find . -name "index.html" -type f || echo "No index.html found"
+          echo ""
+          echo "=== Content of index.html ==="
+          cat build/client/index.html || echo "Could not read index.html"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
