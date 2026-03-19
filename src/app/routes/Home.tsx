@@ -416,49 +416,8 @@ function Home() {
           Benchmark Results
         </h2>
 
-        {/* Semantic Segmentation Results */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Semantic Segmentation</h3>
-          <p className="text-muted-foreground">
-            {lam3cData.results.description}
-          </p>
-          <ScrollArea className="w-full">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {lam3cData.results.table.headers.map((h, i) => (
-                    <TableHead key={i} className={i > 1 ? "text-center" : ""}>
-                      {h}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {lam3cData.results.table.rows.map((row, i) => (
-                  <TableRow key={i}>
-                    {row.map((cell, j) => (
-                      <TableCell
-                        key={j}
-                        className={j > 1 ? "text-center" : "font-medium"}
-                      >
-                        {cell}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-          <p className="text-sm text-muted-foreground">
-            LP = Linear Probing, FT = Full Fine-tuning. All numbers are mIoU
-            (%).
-          </p>
-        </div>
-
         {/* Instance Segmentation Results */}
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Instance Segmentation</h3>
           <p className="text-muted-foreground">
             {lam3cData.instanceSegResults.description}
           </p>
@@ -506,44 +465,58 @@ function Home() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {lam3cData.instanceSegResults.table.rows.map((row, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="font-medium border-r">
-                      {row.method}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.pretrainReal}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.pretrainSynth}
-                    </TableCell>
-                    <TableCell className="text-center border-r">
-                      {row.vgpc}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.scanNetLP}
-                    </TableCell>
-                    <TableCell className="text-center border-r">
-                      {row.scanNetFullFT}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.scanNet200LP}
-                    </TableCell>
-                    <TableCell className="text-center border-r">
-                      {row.scanNet200FullFT}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.scanNetppLP}
-                    </TableCell>
-                    <TableCell className="text-center border-r">
-                      {row.scanNetppFullFT}
-                    </TableCell>
-                    <TableCell className="text-center">{row.s3disLP}</TableCell>
-                    <TableCell className="text-center">
-                      {row.s3disFullFT}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {lam3cData.instanceSegResults.table.rows.map((row, i) => {
+                  const isOurs = row.method.includes("(ours)");
+                  const isCompetitor =
+                    row.method === "MSC" ||
+                    row.method === "PPT (sup.)" ||
+                    row.method === "Sonata";
+                  const rowClassName = isOurs
+                    ? "bg-primary/10"
+                    : isCompetitor
+                      ? "bg-neutral-100 dark:bg-neutral-800"
+                      : "";
+                  return (
+                    <TableRow key={i} className={rowClassName}>
+                      <TableCell className="font-medium border-r">
+                        {row.method}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.pretrainReal}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.pretrainSynth}
+                      </TableCell>
+                      <TableCell className="text-center border-r">
+                        {row.vgpc}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.scanNetLP}
+                      </TableCell>
+                      <TableCell className="text-center border-r">
+                        {row.scanNetFullFT}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.scanNet200LP}
+                      </TableCell>
+                      <TableCell className="text-center border-r">
+                        {row.scanNet200FullFT}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.scanNetppLP}
+                      </TableCell>
+                      <TableCell className="text-center border-r">
+                        {row.scanNetppFullFT}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.s3disLP}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {row.s3disFullFT}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
             <ScrollBar orientation="horizontal" />
