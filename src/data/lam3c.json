@@ -40,9 +40,14 @@
     }
   ],
   "affiliations": [
-    { "id": 1, "name": "AIST" },
-    { "id": 2, "name": "University of Technology Nuremberg" },
-    { "id": 3, "name": "INRIA" }
+    { "id": 1, "name": "AIST", "url": "https://www.aist.go.jp/index_en.html" },
+    {
+      "id": 2,
+      "name": "University of Technology Nuremberg FunAI Lab",
+      "url": "https://fundamentalailab.github.io"
+    },
+    { "id": 3, "name": "INRIA", "url": "https://www.inria.fr" },
+    { "id": 4, "name": "Valeo.ai", "url": "https://www.valeo.com/en/valeo-ai" }
   ],
   "links": {
     "arxiv": "https://arxiv.org/abs/2512.23042",

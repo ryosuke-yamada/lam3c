@@ -173,7 +173,18 @@ function Home() {
                 {lam3cData.affiliations.map((aff) => (
                   <span key={aff.id}>
                     <sup className="mr-0.5">{aff.id}</sup>
-                    {aff.name}
+                    {aff.url ? (
+                      <a
+                        href={aff.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary"
+                      >
+                        {aff.name}
+                      </a>
+                    ) : (
+                      aff.name
+                    )}
                   </span>
                 ))}
               </div>
