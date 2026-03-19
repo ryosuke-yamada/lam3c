@@ -51,7 +51,7 @@
   ],
   "links": {
     "arxiv": "https://arxiv.org/abs/2512.23042",
-    "github": "https://github.com/cvpaperchallenge/lam3c",
+    "github": "https://github.com/ryosuke-yamada/lam3c",
     "huggingface": "https://huggingface.co/aist-cvrt/lam3c-roomtours"
   },
   "abstract": "The bottleneck of 3D self-supervised learning is not only algorithms, but also the scarcity of large-scale 3D data. By turning the vast sea of unlabeled internet videos into point clouds, we unlock a scalable source of 3D supervision. This paper shows that 3D self-supervised learning can be trained using only video-generated point clouds reconstructed from unlabeled videos, without relying on real 3D scans. We introduce RoomTours, a scalable pipeline that converts unlabeled indoor videos into video-generated point clouds, and LAM3C, a 3D self-supervised learning framework designed to learn robust representations from noisy video-generated point clouds. LAM3C transfers well to indoor semantic and instance segmentation tasks across ScanNet, ScanNet200, ScanNet++, and S3DIS benchmarks.",
