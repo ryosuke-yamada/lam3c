@@ -15,7 +15,7 @@
 
 ---
 
-This repository contains the official implementation of LAM3C and the RoomTours pipeline.
+This repository contains the official implementation of LAM3C (pronounced “lah-MEK” /lɑːˈmɛk/) and the RoomTours pipeline.
 
 > ### LAM3C Message
 > The bottleneck of 3D self-supervised learning is not only algorithms, but also the scarcity of large-scale 3D data.  
@@ -299,22 +299,6 @@ If you find our LAM3C work useful, please cite:
   author={Ryousuke Yamada and Kohsuke Ide and Yoshihiro Fukuhara and Hirokatsu Kataoka and Gilles Puy and Andrei Bursuc and Yuki M. Asano},
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2026}
-}
-```
-```bib
-@inproceedings{wu2025sonata,
-    title={Sonata: Self-Supervised Learning of Reliable Point Representations},
-    author={Wu, Xiaoyang and DeTone, Daniel and Frost, Duncan and Shen, Tianwei and Xie, Chris and Yang, Nan and Engel, Jakob and Newcombe, Richard and Zhao, Hengshuang and Straub, Julian},
-    booktitle={CVPR},
-    year={2025}
-}
-```
-```bib
-@misc{pointcept2023,
-    title={Pointcept: A Codebase for Point Cloud Perception Research},
-    author={Pointcept Contributors},
-    howpublished={\url{https://github.com/Pointcept/Pointcept}},
-    year={2023}
 }
 ```
 
