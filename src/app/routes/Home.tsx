@@ -93,7 +93,7 @@ function Home() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "url(/lam3c_background.jpg)",
+            backgroundImage: `url(${BASE_URL}lam3c_background.jpg)`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
