@@ -25,6 +25,8 @@ import type { Route } from "./+types/Home";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { buildMeta } from "@/lib/seo";
 
+const BASE_URL = import.meta.env.BASE_URL || "/";
+
 export const meta: Route.MetaFunction = () =>
   buildMeta({
     title:
@@ -120,12 +122,12 @@ function Home() {
               <div className="flex flex-wrap items-center justify-center gap-4 rounded-full border bg-background/90 px-6 py-3 shadow-sm backdrop-blur">
                 <div className="flex items-center gap-3 pl-4 pr-4">
                   <img
-                    src="/cvpr-logo-black.png"
+                    src={`${BASE_URL}cvpr-logo-black.png`}
                     alt="CVPR 2026 logo"
                     className="h-10 dark:hidden"
                   />
                   <img
-                    src="/cvpr-logo-white.png"
+                    src={`${BASE_URL}cvpr-logo-white.png`}
                     alt="CVPR 2026 logo"
                     className="hidden h-10 dark:block"
                   />
@@ -137,7 +139,7 @@ function Home() {
           {/* Subtitle and content - centered and pushed to bottom half */}
           <div className="space-y-3 flex-shrink-0 mt-auto">
             {/* <img
-              src="/logo.png"
+              src={`${BASE_URL}logo.png`}
               alt="LAM3C"
               className="mx-auto h-32 w-auto sm:h-44 md:h-56"
             /> */}
@@ -234,7 +236,7 @@ function Home() {
       {/* Teaser Image */}
       <div className="mx-auto max-w-3xl">
         <img
-          src="/lam3c_scaling.png"
+          src={`${BASE_URL}lam3c_scaling.png`}
           alt="LAM3C scaling results showing performance improvement with more data"
           className="w-full rounded-xl border shadow-sm"
           loading="lazy"
@@ -294,7 +296,7 @@ function Home() {
         </h2>
         <div className="mx-auto max-w-3xl">
           <img
-            src="/lam3c_scaling.png"
+            src={`${BASE_URL}lam3c_scaling.png`}
             alt="LAM3C scaling results showing performance improvement with more data"
             className="w-full rounded-xl border shadow-sm"
             loading="lazy"
@@ -320,7 +322,7 @@ function Home() {
           </h3>
           <div className="mx-auto max-w-3xl">
             <img
-              src="/lam3c_fig2.jpg"
+              src={`${BASE_URL}lam3c_fig2.jpg`}
               alt="LAM3C embedding stability through Laplacian smoothing"
               className="w-full rounded-xl border shadow-sm"
               loading="lazy"
@@ -359,7 +361,7 @@ function Home() {
           </h3>
           <div className="mx-auto max-w-3xl">
             <img
-              src="/lam3c_fig3.jpg"
+              src={`${BASE_URL}lam3c_fig3.jpg`}
               alt="LAM3C student-teacher framework with masked learning"
               className="w-full rounded-xl border shadow-sm"
               loading="lazy"
@@ -535,7 +537,7 @@ function Home() {
         </h2>
         <div className="mx-auto max-w-3xl">
           <img
-            src="/lam3c_demo.png"
+            src={`${BASE_URL}lam3c_demo.png`}
             alt="Zero-shot semantic visualization comparison between Sonata and LAM3C"
             className="w-full rounded-xl border shadow-sm"
             loading="lazy"
