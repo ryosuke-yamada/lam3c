@@ -15,7 +15,7 @@ export function Footer() {
               rel="noopener noreferrer"
             >
               <FileText className="mr-2 h-4 w-4" />
-              arXiv
+              Paper
             </a>
           </Button>
           <Button variant="ghost" size="sm" asChild>
@@ -25,7 +25,7 @@ export function Footer() {
               rel="noopener noreferrer"
             >
               <SiGithub className="mr-2 h-4 w-4" />
-              GitHub
+              Code
             </a>
           </Button>
           <Button variant="ghost" size="sm" asChild>
@@ -35,7 +35,7 @@ export function Footer() {
               rel="noopener noreferrer"
             >
               <SiHuggingface className="mr-2 h-4 w-4" />
-              HuggingFace
+              Models
             </a>
           </Button>
           <Button variant="ghost" size="sm" disabled>
