@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cvpr2026-bigmac-workshop.limitlab.xyz/sitemap.xml
+Sitemap: https://ryosuke-yamada.github.io/lam3c/sitemap.xml
