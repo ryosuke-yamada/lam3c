@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 
 interface VideoPlayerProps {
   videoPath: string;
@@ -32,7 +32,7 @@ export default function VideoPlayer({ videoPath }: VideoPlayerProps) {
         className="w-full h-full object-cover rounded-lg cursor-pointer"
       />
       <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded text-sm pointer-events-none">
-        {isPlaying ? 'Playing (click to pause)' : 'Paused (click to play)'}
+        {isPlaying ? "Playing (click to pause)" : "Paused (click to play)"}
       </div>
     </div>
   );

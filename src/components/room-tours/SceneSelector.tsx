@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import type { SceneData } from './utils/sceneData';
+import type { SceneData } from "./utils/sceneData";
+import { cn } from "@/lib/utils";
 
 interface SceneSelectorProps {
   scenes: SceneData[];
@@ -19,10 +19,10 @@ export default function SceneSelector({
           key={scene.id}
           onClick={() => onSceneChange(scene.id)}
           className={cn(
-            'flex flex-col items-center gap-2 px-6 py-4 rounded-xl border-2 transition-all',
+            "flex flex-col items-center gap-2 px-6 py-4 rounded-xl border-2 transition-all",
             currentSceneId === scene.id
-              ? 'border-blue-500 bg-blue-50 shadow-md'
-              : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
+              ? "border-blue-500 bg-blue-50 shadow-md"
+              : "border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm",
           )}
         >
           <span className="font-medium text-sm">{scene.displayName}</span>

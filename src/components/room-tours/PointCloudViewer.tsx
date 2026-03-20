@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Button } from "@/components/ui/button";
 
 interface PointCloudViewerProps {
   plyPath: string;
@@ -11,7 +11,9 @@ interface PointCloudViewerProps {
 export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const initialCameraPositionRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 100));
+  const initialCameraPositionRef = useRef<THREE.Vector3>(
+    new THREE.Vector3(0, 0, 100),
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,7 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
       45,
       container.clientWidth / container.clientHeight,
       1,
-      2000
+      2000,
     );
     camera.position.set(0, 0, 100);
     cameraRef.current = camera;
@@ -107,10 +109,10 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
       },
       undefined,
       (err) => {
-        console.error('Error loading PLY file:', err);
-        setError('Failed to load 3D point cloud');
+        console.error("Error loading PLY file:", err);
+        setError("Failed to load 3D point cloud");
         setIsLoading(false);
-      }
+      },
     );
 
     // Handle resize
@@ -122,7 +124,7 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Animation loop
     let rafId: number;
@@ -136,7 +138,7 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
     // Cleanup
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
 
       if (points) {
         scene.remove(points);
