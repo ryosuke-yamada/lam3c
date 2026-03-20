@@ -24,6 +24,7 @@ import lam3cData from "../../data/lam3c.json";
 import type { Route } from "./+types/Home";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { buildMeta } from "@/lib/seo";
+import RoomToursGallery from "@/components/room-tours/RoomToursGallery";
 
 const BASE_URL = import.meta.env.BASE_URL || "/";
 
@@ -294,14 +295,7 @@ function Home() {
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           RoomTours Gallery
         </h2>
-        <div className="mx-auto max-w-3xl">
-          <img
-            src={`${BASE_URL}lam3c_scaling.png`}
-            alt="LAM3C scaling results showing performance improvement with more data"
-            className="w-full rounded-xl border shadow-sm"
-            loading="lazy"
-          />
-        </div>
+        <RoomToursGallery />
       </section>
 
       {/* LAM3C Pipeline */}
