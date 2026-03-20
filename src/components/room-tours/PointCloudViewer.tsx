@@ -11,6 +11,7 @@ interface PointCloudViewerProps {
 export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const initialCameraPositionRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 100));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,6 +73,9 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
           const fov = camera.fov * (Math.PI / 180);
           const cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
           camera.position.set(0, 0, cameraZ);
+
+          // Save initial camera position for reset
+          initialCameraPositionRef.current.set(0, 0, cameraZ);
         }
 
         // Create custom shader material
@@ -166,7 +170,7 @@ export default function PointCloudViewer({ plyPath }: PointCloudViewerProps) {
 
   const handleResetView = () => {
     if (cameraRef.current) {
-      cameraRef.current.position.set(0, 0, 100);
+      cameraRef.current.position.copy(initialCameraPositionRef.current);
     }
   };
 
