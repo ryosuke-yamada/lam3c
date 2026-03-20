@@ -17,14 +17,14 @@ export const scenes: SceneData[] = [
   {
     id: "scene-005",
     name: "bathroom",
-    displayName: "Bathroom 1",
+    displayName: "Bathroom",
     videoFile: "scene-005_bathroom.mp4",
     plyFile: "scene-005_bathroom.ply",
   },
   {
     id: "scene-009",
     name: "bathroom",
-    displayName: "Bathroom 2",
+    displayName: "Bathroom",
     videoFile: "scene-009_bathroom.mp4",
     plyFile: "scene-009_bathroom.ply",
   },
