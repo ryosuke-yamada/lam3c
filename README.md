@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://arxiv.org/abs/2512.23042"><img src="https://img.shields.io/badge/arXiv-2512.23042-b31b1b.svg" alt="arXiv"></a>
   <a href=""><img src="https://img.shields.io/badge/CVPR-2026-blue.svg" alt="CVPR 2026"></a>
-  <a href=""><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
+  <a href="https://ryosuke-yamada.github.io/lam3c/"><img src="https://img.shields.io/badge/Website-Project-8A2BE2" alt="Website"></a>
   <a href="https://huggingface.co/aist-cvrt/lam3c-roomtours"><img src="https://img.shields.io/badge/HuggingFace-Models-yellow" alt="HuggingFace Models"></a>
    <a href=""><img src="https://img.shields.io/badge/Dataset-RoomTours-009688" alt="Dataset"></a>
 </p>
