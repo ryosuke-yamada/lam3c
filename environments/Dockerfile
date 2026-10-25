@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:22-bookworm-slim
+ARG BASE_IMAGE=node:22.23.4-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
 FROM ${BASE_IMAGE}
 
 # Define shared build arguments.
@@ -31,6 +31,6 @@ WORKDIR ${INNER_APPLICATION_PATH}
 # When this Dockerfile is used in GitHub Actions, the ${RUN_YARN_INSTALL_AT_BUILD_TIME} is set to "true" in the workflow file.
 # This leads to the installation of Node.js packages in the Docker image.
 COPY --chown=${UID}:${GID} ${APPLICATION_PATH}/package.json ${APPLICATION_PATH}/yarn.lock ./
-RUN test ${RUN_YARN_INSTALL_AT_BUILD_TIME} = "true" && yarn install --frozen-lockfile || echo "skip to run yarn install."
+RUN if [ "${RUN_YARN_INSTALL_AT_BUILD_TIME}" = "true" ]; then yarn install --frozen-lockfile; fi
 
 CMD ["bash"]
